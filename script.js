@@ -1,3 +1,134 @@
+// Sponsors Carousel Functionality
+function initSponsorsCarousel() {
+    const carouselTrack = document.querySelector('.carousel-track');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const dots = document.querySelectorAll('.dot');
+    
+    if (!carouselTrack) return;
+
+    let currentSlide = 0;
+    const slideWidth = 250 + 32; // card width + gap
+    const slidesPerView = Math.floor(window.innerWidth / slideWidth);
+    const totalSlides = document.querySelectorAll('.sponsor-card').length;
+    const maxSlides = Math.max(0, totalSlides - slidesPerView);
+
+    function updateCarousel() {
+        const translateX = -currentSlide * slideWidth;
+        carouselTrack.style.transform = `translateX(${translateX}px)`;
+        
+        // Update dots
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+        
+        // Update buttons
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide >= maxSlides;
+    }
+
+    function nextSlide() {
+        if (currentSlide < maxSlides) {
+            currentSlide++;
+            updateCarousel();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updateCarousel();
+        }
+    }
+
+    function goToSlide(slideIndex) {
+        currentSlide = Math.max(0, Math.min(slideIndex, maxSlides));
+        updateCarousel();
+    }
+
+    // Event listeners
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Auto-slide functionality
+    let autoSlideInterval;
+    
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => {
+            if (currentSlide >= maxSlides) {
+                currentSlide = 0;
+            } else {
+                currentSlide++;
+            }
+            updateCarousel();
+        }, 3000); // Change slide every 3 seconds
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+
+    // Pause auto-slide on hover
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+        carouselContainer.addEventListener('mouseenter', stopAutoSlide);
+        carouselContainer.addEventListener('mouseleave', startAutoSlide);
+    }
+
+    // Initialize carousel
+    updateCarousel();
+    startAutoSlide();
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const newSlidesPerView = Math.floor(window.innerWidth / slideWidth);
+        const newMaxSlides = Math.max(0, totalSlides - newSlidesPerView);
+        
+        if (currentSlide > newMaxSlides) {
+            currentSlide = newMaxSlides;
+        }
+        
+        updateCarousel();
+    });
+
+    // Touch/swipe support for mobile
+    let startX = 0;
+    let endX = 0;
+
+    carouselTrack.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        stopAutoSlide();
+    });
+
+    carouselTrack.addEventListener('touchmove', (e) => {
+        endX = e.touches[0].clientX;
+    });
+
+    carouselTrack.addEventListener('touchend', () => {
+        const swipeDistance = startX - endX;
+        const minSwipeDistance = 50;
+
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+        
+        startAutoSlide();
+    });
+}
+
+// Initialize carousel when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initSponsorsCarousel();
+});
+
 // Mobile Navigation Toggle
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');

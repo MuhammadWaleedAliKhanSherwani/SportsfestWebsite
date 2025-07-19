@@ -249,9 +249,23 @@ body {
     box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
 
+.cta-button.primary.blue {
+    background: linear-gradient(135deg, #1B2452, #2A3B7A);
+    color: var(--royal-gold);
+    box-shadow: 0 10px 30px rgba(27, 36, 82, 0.3);
+    border: 2px solid var(--royal-gold);
+}
+
 .cta-button.primary:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+}
+
+.cta-button.primary.blue:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #2A3B7A, #1B2452);
+    color: var(--royal-gold);
 }
 
 .cta-button.secondary {
@@ -944,11 +958,22 @@ body {
     background: linear-gradient(180deg, var(--midnight-navy) 0%, #243166 100%);
 }
 
-.sponsors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+.sponsors-carousel {
     margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-container {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    gap: 2rem;
 }
 
 .sponsor-card {
@@ -959,6 +984,8 @@ body {
     border: 1px solid var(--metallic-bronze);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     backdrop-filter: blur(10px);
+    min-width: 250px;
+    flex-shrink: 0;
 }
 
 .sponsor-card:hover {
@@ -985,6 +1012,65 @@ body {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+/* Carousel Controls */
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.carousel-btn {
+    background: var(--gold-gradient);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--midnight-navy);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.carousel-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+}
+
+.carousel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--royal-gold);
+    transform: scale(1.2);
+}
+
+.dot:hover {
+    background: var(--metallic-bronze);
 }
 
 /* Responsive Design for New Sections */
@@ -1024,5 +1110,463 @@ body {
 
     .sponsor-card {
         padding: 1.5rem;
+    }
+} 
+
+/* Payment Instructions Section */
+.payments {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, var(--midnight-navy) 0%, #243166 100%);
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.payment-method {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--metallic-bronze);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.payment-method:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+}
+
+.payment-icon {
+    background: var(--gold-gradient);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--midnight-navy);
+}
+
+.payment-method h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--royal-gold);
+    margin-bottom: 1.5rem;
+}
+
+.payment-details {
+    margin-bottom: 1.5rem;
+}
+
+.payment-details p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.payment-details strong {
+    color: var(--royal-gold);
+}
+
+.payment-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.payment-steps span {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.payment-steps i {
+    background: var(--royal-gold);
+    color: var(--midnight-navy);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.payment-note {
+    margin-top: 3rem;
+}
+
+.note-card {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid var(--royal-gold);
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.note-card i {
+    color: var(--royal-gold);
+    font-size: 1.5rem;
+    margin-top: 0.2rem;
+}
+
+.note-card h4 {
+    color: var(--royal-gold);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.note-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.note-card li {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+    line-height: 1.6;
+}
+
+.note-card li::before {
+    content: "•";
+    color: var(--royal-gold);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* Responsive Design for Payments */
+@media (max-width: 768px) {
+    .payment-methods {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .payment-method {
+        padding: 2rem;
+    }
+
+    .note-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .payment-steps {
+        gap: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-method {
+        padding: 1.5rem;
+    }
+
+    .payment-details p {
+        font-size: 0.9rem;
+    }
+
+    .payment-steps span {
+        font-size: 0.85rem;
+    }
+} 
+
+/* Responsive Design for Sponsors Carousel */
+@media (max-width: 768px) {
+    .carousel-track {
+        gap: 1rem;
+    }
+
+    .sponsor-card {
+        min-width: 200px;
+        padding: 1.5rem;
+    }
+
+    .carousel-controls {
+        gap: 1rem;
+    }
+
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sponsor-card {
+        min-width: 180px;
+        padding: 1rem;
+    }
+
+    .sponsor-logo {
+        font-size: 1.2rem;
+    }
+
+    .sponsor-logo i {
+        font-size: 1.5rem;
+    }
+
+    .carousel-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+} 
+
+/* Contact Section */
+.contact {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, var(--midnight-navy) 0%, #243166 100%);
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+}
+
+.contact-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.contact-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid var(--metallic-bronze);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+}
+
+.contact-icon {
+    background: var(--gold-gradient);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+    color: var(--midnight-navy);
+}
+
+.contact-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--royal-gold);
+    margin-bottom: 1rem;
+}
+
+.contact-card p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.contact-note {
+    display: block;
+    color: var(--metallic-bronze);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.contact-form {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--metallic-bronze);
+    backdrop-filter: blur(10px);
+}
+
+.contact-form h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--royal-gold);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.contact-form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--metallic-bronze);
+    border-radius: 10px;
+    color: var(--pure-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--royal-gold);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+.form-group select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23D4AF37' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 3rem;
+}
+
+.submit-btn {
+    background: var(--gold-gradient);
+    color: var(--midnight-navy);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+}
+
+.social-links {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.social-links h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--royal-gold);
+    margin-bottom: 2rem;
+}
+
+.social-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--metallic-bronze);
+    border-radius: 50px;
+    color: var(--pure-white);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.social-link:hover {
+    background: var(--royal-gold);
+    color: var(--midnight-navy);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+.social-link i {
+    font-size: 1.2rem;
+}
+
+/* Responsive Design for Contact */
+@media (max-width: 768px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .contact-info {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .contact-form {
+        padding: 2rem;
+    }
+
+    .social-grid {
+        gap: 1rem;
+    }
+
+    .social-link {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-card {
+        padding: 1.5rem;
+    }
+
+    .contact-form {
+        padding: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .social-link {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
     }
 } 
