@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Registration | Sports Fest Portal</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="portal-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-futbol"></i>
+                <span>PFPL 2024</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="index.html">Portal</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Container -->
+    <div class="auth-container">
+        <div class="auth-card" style="max-width: 800px;">
+            <div class="auth-header">
+                <h1><i class="fas fa-users"></i> Team Registration</h1>
+                <p>Register your team for the Sports Fest 2024</p>
+            </div>
+
+            <form class="auth-form" id="registrationForm">
+                <!-- Account Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user-circle"></i> Account Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" placeholder="team@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                            <small class="password-strength" id="passwordStrength"></small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-flag"></i> Team Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teamName">Team Name *</label>
+                            <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teamCategory">Team Category *</label>
+                            <select id="teamCategory" name="teamCategory" required>
+                                <option value="">Select category</option>
+                                <option value="university">University Team</option>
+                                <option value="college">College Team</option>
+                                <option value="school">School Team</option>
+                                <option value="club">Sports Club</option>
+                                <option value="corporate">Corporate Team</option>
+                                <option value="amateur">Amateur Team</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="institution">Institution/Organization</label>
+                            <input type="text" id="institution" name="institution" placeholder="University/College/Organization name">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" placeholder="Enter your city" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Captain Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-crown"></i> Team Captain Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="captainName">Captain Name *</label>
+                            <input type="text" id="captainName" name="captainName" placeholder="Full name of team captain" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="captainPhone">Captain Phone *</label>
+                            <input type="tel" id="captainPhone" name="captainPhone" placeholder="03xxxxxxxxx" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="captainAge">Captain Age *</label>
+                            <input type="number" id="captainAge" name="captainAge" min="16" max="50" placeholder="Age" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="captainCNIC">Captain CNIC *</label>
+                            <input type="text" id="captainCNIC" name="captainCNIC" placeholder="35202-1234567-8" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Members -->
+                <div class="form-section">
+                    <h3><i class="fas fa-users"></i> Team Members</h3>
+                    <div id="teamMembers">
+                        <div class="member-row" data-member="1">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Member 1 Name *</label>
+                                    <input type="text" name="member1Name" placeholder="Full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Member 1 Age *</label>
+                                    <input type="number" name="member1Age" min="16" max="50" placeholder="Age" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Member 1 Phone *</label>
+                                    <input type="tel" name="member1Phone" placeholder="03xxxxxxxxx" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="auth-btn secondary" id="addMember">
+                        <i class="fas fa-plus"></i> Add Another Member
+                    </button>
+                </div>
+
+                <!-- Sports Categories -->
+                <div class="form-section">
+                    <h3><i class="fas fa-trophy"></i> Sports Categories</h3>
+                    <p class="section-description">Select the sports categories your team will participate in:</p>
+                    
+                    <div class="sports-grid" id="sportsCategories">
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="futsal" name="sports" value="futsal">
+                            <label for="futsal">
+                                <i class="fas fa-futbol"></i>
+                                <span>Futsal (5 players)</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="basketball" name="sports" value="basketball">
+                            <label for="basketball">
+                                <i class="fas fa-basketball-ball"></i>
+                                <span>Basketball (3x3)</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="tableTennis" name="sports" value="tableTennis">
+                            <label for="tableTennis">
+                                <i class="fas fa-table-tennis"></i>
+                                <span>Table Tennis</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="armWrestling" name="sports" value="armWrestling">
+                            <label for="armWrestling">
+                                <i class="fas fa-dumbbell"></i>
+                                <span>Arm Wrestling</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="athletics" name="sports" value="athletics">
+                            <label for="athletics">
+                                <i class="fas fa-running"></i>
+                                <span>Athletics</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="swimming" name="sports" value="swimming">
+                            <label for="swimming">
+                                <i class="fas fa-swimming-pool"></i>
+                                <span>Swimming</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="badminton" name="sports" value="badminton">
+                            <label for="badminton">
+                                <i class="fas fa-table-tennis"></i>
+                                <span>Badminton</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="volleyball" name="sports" value="volleyball">
+                            <label for="volleyball">
+                                <i class="fas fa-volleyball-ball"></i>
+                                <span>Volleyball</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="cricket" name="sports" value="cricket">
+                            <label for="cricket">
+                                <i class="fas fa-cricket"></i>
+                                <span>Cricket</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="football" name="sports" value="football">
+                            <label for="football">
+                                <i class="fas fa-futbol"></i>
+                                <span>Football</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="hockey" name="sports" value="hockey">
+                            <label for="hockey">
+                                <i class="fas fa-hockey-puck"></i>
+                                <span>Hockey</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="squash" name="sports" value="squash">
+                            <label for="squash">
+                                <i class="fas fa-table-tennis"></i>
+                                <span>Squash</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="tennis" name="sports" value="tennis">
+                            <label for="tennis">
+                                <i class="fas fa-table-tennis"></i>
+                                <span>Tennis</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="boxing" name="sports" value="boxing">
+                            <label for="boxing">
+                                <i class="fas fa-boxing-glove"></i>
+                                <span>Boxing</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="wrestling" name="sports" value="wrestling">
+                            <label for="wrestling">
+                                <i class="fas fa-dumbbell"></i>
+                                <span>Wrestling</span>
+                            </label>
+                        </div>
+                        <div class="sport-checkbox">
+                            <input type="checkbox" id="weightlifting" name="sports" value="weightlifting">
+                            <label for="weightlifting">
+                                <i class="fas fa-dumbbell"></i>
+                                <span>Weightlifting</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a> *
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn primary">
+                    <i class="fas fa-user-plus"></i>
+                    Register Team
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <p>Already have an account? <a href="team-login.html">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="team-register.js"></script>
+</body>
+</html> 

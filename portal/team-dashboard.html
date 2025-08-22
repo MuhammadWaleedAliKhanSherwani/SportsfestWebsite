@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Dashboard | Sports Fest Portal</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="portal-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-futbol"></i>
+                <span>PFPL 2024</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="index.html">Portal</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>Team Dashboard</h1>
+                <p id="teamName">Loading team information...</p>
+            </div>
+            <div class="dashboard-nav">
+                <a href="#" class="dashboard-nav-btn active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i> Overview
+                </a>
+                <a href="#" class="dashboard-nav-btn" data-section="team">
+                    <i class="fas fa-users"></i> Team Info
+                </a>
+                <a href="#" class="dashboard-nav-btn" data-section="sports">
+                    <i class="fas fa-trophy"></i> Sports
+                </a>
+                <a href="#" class="dashboard-nav-btn" data-section="results">
+                    <i class="fas fa-chart-line"></i> Results
+                </a>
+                <a href="#" class="dashboard-nav-btn" data-section="schedule">
+                    <i class="fas fa-calendar-alt"></i> Schedule
+                </a>
+                <button onclick="signOut()" class="dashboard-nav-btn">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Overview Section -->
+            <div class="dashboard-section active" id="overview">
+                <div class="dashboard-grid">
+                    <!-- Team Stats -->
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-chart-bar"></i> Team Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalSports">0</div>
+                                <div class="stat-label">Sports Categories</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalMembers">0</div>
+                                <div class="stat-label">Team Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="completedEvents">0</div>
+                                <div class="stat-label">Completed Events</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="upcomingEvents">0</div>
+                                <div class="stat-label">Upcoming Events</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                        <div class="activity-list" id="recentActivity">
+                            <div class="activity-item">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Loading recent activity...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="updateTeamInfo()">
+                                <i class="fas fa-edit"></i>
+                                Update Team Info
+                            </button>
+                            <button class="action-btn" onclick="viewSchedule()">
+                                <i class="fas fa-calendar"></i>
+                                View Schedule
+                            </button>
+                            <button class="action-btn" onclick="contactSupport()">
+                                <i class="fas fa-headset"></i>
+                                Contact Support
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team Status -->
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-info-circle"></i> Team Status</h3>
+                        <div class="status-info">
+                            <div class="status-item">
+                                <span class="status-label">Registration Status:</span>
+                                <span class="status-value" id="registrationStatus">Loading...</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Payment Status:</span>
+                                <span class="status-value" id="paymentStatus">Loading...</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Last Updated:</span>
+                                <span class="status-value" id="lastUpdated">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Info Section -->
+            <div class="dashboard-section" id="team">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-users"></i> Team Information</h3>
+                    <div class="team-info" id="teamInfo">
+                        <div class="loading">Loading team information...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sports Section -->
+            <div class="dashboard-section" id="sports">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-trophy"></i> Sports Participation</h3>
+                    <div class="sports-participation" id="sportsParticipation">
+                        <div class="loading">Loading sports information...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="dashboard-section" id="results">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-line"></i> Results & Progress</h3>
+                    <div class="results-container" id="resultsContainer">
+                        <div class="loading">Loading results...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Section -->
+            <div class="dashboard-section" id="schedule">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-calendar-alt"></i> Event Schedule</h3>
+                    <div class="schedule-container" id="scheduleContainer">
+                        <div class="loading">Loading schedule...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="team-dashboard.js"></script>
+</body>
+</html> 

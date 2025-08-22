@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Fest Portal | PFPL 2024</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="portal-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-futbol"></i>
+                <span>PFPL 2024</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#tournament">Tournament</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Portal Hero Section -->
+    <section class="portal-hero">
+        <div class="portal-hero-background">
+            <div class="portal-hero-overlay"></div>
+        </div>
+        <div class="portal-hero-content">
+            <div class="portal-hero-text">
+                <h1 class="portal-hero-title">
+                    <span class="portal-title-main">SPORTS FEST</span>
+                    <span class="portal-title-sub">PORTAL</span>
+                </h1>
+                <p class="portal-hero-description">
+                    Access your team dashboard, manage registrations, and track your progress in real-time.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portal Selection -->
+    <section class="portal-selection">
+        <div class="container">
+            <div class="portal-cards">
+                <div class="portal-card team-portal">
+                    <div class="portal-card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h2>Team Portal</h2>
+                    <p>Register your team, manage members, and track your progress across all sports categories.</p>
+                    <div class="portal-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Team Registration & Management</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Real-time Progress Tracking</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Score Updates & Results</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>16 Sports Categories</span>
+                        </div>
+                    </div>
+                    <a href="team-login.html" class="portal-btn primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Access Team Portal
+                    </a>
+                </div>
+
+                <div class="portal-card admin-portal">
+                    <div class="portal-card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h2>Admin Portal</h2>
+                    <p>Manage all teams, track tournament progress, and export data for comprehensive oversight.</p>
+                    <div class="portal-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Complete Team Management</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Real-time Tournament Tracking</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Data Export & Analytics</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Advanced Filtering & Search</span>
+                        </div>
+                    </div>
+                    <a href="admin-login.html" class="portal-btn secondary">
+                        <i class="fas fa-user-shield"></i>
+                        Access Admin Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="portal-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalTeams">0</h3>
+                        <p>Registered Teams</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>16</h3>
+                        <p>Sports Categories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="activeEvents">0</h3>
+                        <p>Active Events</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="completedEvents">0</h3>
+                        <p>Completed Events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-futbol"></i>
+                    <span>Pakistan Futsal Premier League 2024</span>
+                </div>
+                <div class="footer-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../index.html#about">About</a>
+                    <a href="../index.html#contact">Contact</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pakistan Futsal Premier League. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../firebase-config.js"></script>
+    <script src="portal.js"></script>
+</body>
+</html> 

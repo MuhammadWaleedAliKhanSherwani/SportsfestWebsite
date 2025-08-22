@@ -1,0 +1,201 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isTeam() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'team';
+    }
+    
+    function isOwner(teamId) {
+      return isAuthenticated() && request.auth.uid == teamId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Teams collection
+    match /teams/{teamId} {
+      allow read: if isAuthenticated() && (isOwner(teamId) || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == teamId;
+      allow update: if isAuthenticated() && (isOwner(teamId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Sports participation collection
+    match /sports_participation/{participationId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isTeam();
+      allow update: if isAuthenticated() && (isTeam() || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Events collection
+    match /events/{eventId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Results collection
+    match /results/{resultId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Team activity collection
+    match /team_activity/{activityId} {
+      allow read: if isAuthenticated() && (isTeam() || isAdmin());
+      allow create: if isAuthenticated() && isTeam();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Admin activity collection
+    match /admin_activity/{activityId} {
+      allow read, create, update, delete: if isAdmin();
+    }
+    
+    // Tournament settings collection
+    match /tournament_settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAuthenticated() && isAdmin();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Payment records collection
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+      allow create: if isAuthenticated() && isTeam();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Venues collection
+    match /venues/{venueId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Referees collection
+    match /referees/{refereeId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Match schedules collection
+    match /match_schedules/{scheduleId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Team documents collection (for file uploads)
+    match /team_documents/{documentId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+      allow create: if isAuthenticated() && isTeam();
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+    }
+    
+    // Public announcements collection
+    match /announcements/{announcementId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Tournament brackets collection
+    match /tournament_brackets/{bracketId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Live scores collection
+    match /live_scores/{scoreId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Team statistics collection
+    match /team_statistics/{statId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Sport categories collection
+    match /sport_categories/{categoryId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Registration periods collection
+    match /registration_periods/{periodId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Emergency contacts collection
+    match /emergency_contacts/{contactId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+      allow create: if isAuthenticated() && isTeam();
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+    }
+    
+    // Medical records collection
+    match /medical_records/{recordId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+      allow create: if isAuthenticated() && isTeam();
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == resource.data.teamId || isAdmin());
+    }
+    
+    // Equipment inventory collection
+    match /equipment_inventory/{itemId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Volunteer assignments collection
+    match /volunteer_assignments/{assignmentId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Feedback and reviews collection
+    match /feedback/{feedbackId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // System logs collection (for debugging and monitoring)
+    match /system_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+  }
+} 
