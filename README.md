@@ -16,35 +16,36 @@ A comprehensive Sports Fest portal integrated with Firebase for the Pakistan Fut
 - **Sports Selection**: Choose from 16 different sports categories
 - **Real-time Dashboard**: Live updates on team progress and participation
 - **Progress Tracking**: Monitor performance across all sports categories
-- **Schedule Viewing**: Access event schedules and match times
+- **Schedule Viewing**: Access event schedules and match times for selected sports
 - **Results Tracking**: View scores and tournament standings
+- **Team Information Updates**: Edit team details and sports participation
 
 ### 🛡️ Admin Portal
 - **Complete Team Management**: View, edit, and manage all registered teams
 - **Advanced Filtering**: Filter teams by category, city, and status
 - **Data Export**: Export team data to CSV/Excel formats
-- **Event Management**: Create and manage tournament events
-- **Results Management**: Update scores and tournament results
+- **Event Management**: Create, edit, and manage tournament events
+- **Results Management**: Add, edit, and manage tournament results and scores
 - **Analytics Dashboard**: Comprehensive tournament analytics and insights
 - **Real-time Monitoring**: Live tracking of all tournament activities
 
 ### 🏅 Sports Categories
 1. **Futsal** (5 players)
-2. **Basketball** (3x3)
-3. **Table Tennis**
-4. **Arm Wrestling**
-5. **Athletics**
-6. **Swimming**
+2. **Cricket**
+3. **Basketball** (3x3)
+4. **Throwball**
+5. **Volleyball**
+6. **Dodgeball**
 7. **Badminton**
-8. **Volleyball**
-9. **Cricket**
-10. **Football**
-11. **Hockey**
-12. **Squash**
-13. **Tennis**
-14. **Boxing**
-15. **Wrestling**
-16. **Weightlifting**
+8. **Chess**
+9. **Ludo**
+10. **Carrom**
+11. **Scavenger Hunt**
+12. **Gaming**
+13. **Table Tennis**
+14. **Athletics**
+15. **Strongmen**
+16. **Tug of War**
 
 ## 🚀 Quick Start
 
@@ -344,12 +345,14 @@ This project is proprietary software for Pakistan Futsal Premier League 2024.
 
 ## 🔄 Updates
 
-### Version 1.0.0 (Current)
-- Initial release with core functionality
-- Team registration and management
-- Admin dashboard with analytics
+### Version 1.1.0 (Current)
+- Complete admin functionality with event and result management
+- Full team portal with schedule viewing and results tracking
+- Updated sports categories (16 sports)
+- Enhanced UI/UX with improved forms and styling
 - Real-time updates and notifications
 - Data export capabilities
+- Comprehensive team management system
 
 ### Planned Features
 - Mobile app integration

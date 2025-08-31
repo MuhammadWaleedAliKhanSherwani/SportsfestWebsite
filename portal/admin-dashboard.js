@@ -602,7 +602,113 @@ function convertTeamsToCSV(teams) {
 }
 
 function createEvent() {
-    showNotification('Event creation feature coming soon!', 'info');
+    const eventFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-plus-circle"></i> Create New Event</h3>
+            <form id="eventForm" class="admin-form">
+                <div class="form-group">
+                    <label for="eventName">Event Name *</label>
+                    <input type="text" id="eventName" name="eventName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventSport">Sport Category *</label>
+                    <select id="eventSport" name="eventSport" required>
+                        <option value="">Select Sport</option>
+                        <option value="futsal">Futsal</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="basketball">Basketball</option>
+                        <option value="throwball">Throwball</option>
+                        <option value="volleyball">Volleyball</option>
+                        <option value="dodgeball">Dodgeball</option>
+                        <option value="badminton">Badminton</option>
+                        <option value="chess">Chess</option>
+                        <option value="ludo">Ludo</option>
+                        <option value="carrom">Carrom</option>
+                        <option value="scavengerHunt">Scavenger Hunt</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="tableTennis">Table Tennis</option>
+                        <option value="athletics">Athletics</option>
+                        <option value="strongmen">Strongmen</option>
+                        <option value="tugOfWar">Tug of War</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Start Date *</label>
+                        <input type="datetime-local" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date *</label>
+                        <input type="datetime-local" id="endDate" name="endDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventVenue">Venue *</label>
+                    <input type="text" id="eventVenue" name="eventVenue" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" name="eventDescription" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxTeams">Maximum Teams</label>
+                    <input type="number" id="maxTeams" name="maxTeams" min="1" value="16">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventStatus">Status</label>
+                    <select id="eventStatus" name="eventStatus">
+                        <option value="upcoming">Upcoming</option>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(eventFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('eventForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const eventData = {
+            name: formData.get('eventName'),
+            sport: formData.get('eventSport'),
+            startDate: new Date(formData.get('startDate')),
+            endDate: new Date(formData.get('endDate')),
+            venue: formData.get('eventVenue'),
+            description: formData.get('eventDescription'),
+            maxTeams: parseInt(formData.get('maxTeams')) || 16,
+            status: formData.get('eventStatus'),
+            participatingTeams: [],
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('events').add(eventData);
+            showNotification('Event created successfully!', 'success');
+            closeModal();
+            loadEvents(); // Refresh events list
+        } catch (error) {
+            console.error('Error creating event:', error);
+            showNotification('Error creating event', 'error');
+        }
+    });
 }
 
 function manageTeams() {
@@ -628,7 +734,112 @@ function viewTeam(teamId) {
 }
 
 function editTeam(teamId) {
-    showNotification('Team editing feature coming soon!', 'info');
+    const team = teamsData.find(t => t.id === teamId);
+    if (!team) {
+        showNotification('Team not found', 'error');
+        return;
+    }
+
+    const editFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Team: ${team.teamName}</h3>
+            <form id="editTeamForm" class="admin-form">
+                <div class="form-group">
+                    <label for="editTeamName">Team Name *</label>
+                    <input type="text" id="editTeamName" name="teamName" value="${team.teamName || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editTeamCategory">Team Category *</label>
+                    <select id="editTeamCategory" name="teamCategory" required>
+                        <option value="university" ${team.teamCategory === 'university' ? 'selected' : ''}>University Team</option>
+                        <option value="college" ${team.teamCategory === 'college' ? 'selected' : ''}>College Team</option>
+                        <option value="school" ${team.teamCategory === 'school' ? 'selected' : ''}>School Team</option>
+                        <option value="club" ${team.teamCategory === 'club' ? 'selected' : ''}>Sports Club</option>
+                        <option value="corporate" ${team.teamCategory === 'corporate' ? 'selected' : ''}>Corporate Team</option>
+                        <option value="amateur" ${team.teamCategory === 'amateur' ? 'selected' : ''}>Amateur Team</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editInstitution">Institution/Organization</label>
+                    <input type="text" id="editInstitution" name="institution" value="${team.institution || ''}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editCity">City *</label>
+                    <input type="text" id="editCity" name="city" value="${team.city || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editStatus">Status</label>
+                    <select id="editStatus" name="status">
+                        <option value="pending" ${team.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="approved" ${team.status === 'approved' ? 'selected' : ''}>Approved</option>
+                        <option value="rejected" ${team.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        <option value="disqualified" ${team.status === 'disqualified' ? 'selected' : ''}>Disqualified</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editSports">Sports Categories</label>
+                    <div class="sports-checkboxes">
+                        <label><input type="checkbox" name="sports" value="futsal" ${team.sports && team.sports.includes('futsal') ? 'checked' : ''}> Futsal</label>
+                        <label><input type="checkbox" name="sports" value="cricket" ${team.sports && team.sports.includes('cricket') ? 'checked' : ''}> Cricket</label>
+                        <label><input type="checkbox" name="sports" value="basketball" ${team.sports && team.sports.includes('basketball') ? 'checked' : ''}> Basketball</label>
+                        <label><input type="checkbox" name="sports" value="throwball" ${team.sports && team.sports.includes('throwball') ? 'checked' : ''}> Throwball</label>
+                        <label><input type="checkbox" name="sports" value="volleyball" ${team.sports && team.sports.includes('volleyball') ? 'checked' : ''}> Volleyball</label>
+                        <label><input type="checkbox" name="sports" value="dodgeball" ${team.sports && team.sports.includes('dodgeball') ? 'checked' : ''}> Dodgeball</label>
+                        <label><input type="checkbox" name="sports" value="badminton" ${team.sports && team.sports.includes('badminton') ? 'checked' : ''}> Badminton</label>
+                        <label><input type="checkbox" name="sports" value="chess" ${team.sports && team.sports.includes('chess') ? 'checked' : ''}> Chess</label>
+                        <label><input type="checkbox" name="sports" value="ludo" ${team.sports && team.sports.includes('ludo') ? 'checked' : ''}> Ludo</label>
+                        <label><input type="checkbox" name="sports" value="carrom" ${team.sports && team.sports.includes('carrom') ? 'checked' : ''}> Carrom</label>
+                        <label><input type="checkbox" name="sports" value="scavengerHunt" ${team.sports && team.sports.includes('scavengerHunt') ? 'checked' : ''}> Scavenger Hunt</label>
+                        <label><input type="checkbox" name="sports" value="gaming" ${team.sports && team.sports.includes('gaming') ? 'checked' : ''}> Gaming</label>
+                        <label><input type="checkbox" name="sports" value="tableTennis" ${team.sports && team.sports.includes('tableTennis') ? 'checked' : ''}> Table Tennis</label>
+                        <label><input type="checkbox" name="sports" value="athletics" ${team.sports && team.sports.includes('athletics') ? 'checked' : ''}> Athletics</label>
+                        <label><input type="checkbox" name="sports" value="strongmen" ${team.sports && team.sports.includes('strongmen') ? 'checked' : ''}> Strongmen</label>
+                        <label><input type="checkbox" name="sports" value="tugOfWar" ${team.sports && team.sports.includes('tugOfWar') ? 'checked' : ''}> Tug of War</label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Team</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(editFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('editTeamForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const selectedSports = formData.getAll('sports');
+        
+        const updateData = {
+            teamName: formData.get('teamName'),
+            teamCategory: formData.get('teamCategory'),
+            institution: formData.get('institution'),
+            city: formData.get('city'),
+            status: formData.get('status'),
+            sports: selectedSports,
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('teams').doc(teamId).update(updateData);
+            showNotification('Team updated successfully!', 'success');
+            closeModal();
+            loadTeams(); // Refresh teams list
+        } catch (error) {
+            console.error('Error updating team:', error);
+            showNotification('Error updating team', 'error');
+        }
+    });
 }
 
 async function deleteTeam(teamId) {
@@ -672,7 +883,120 @@ function viewEvent(eventId) {
 }
 
 function editEvent(eventId) {
-    showNotification('Event editing feature coming soon!', 'info');
+    const event = eventsData.find(e => e.id === eventId);
+    if (!event) {
+        showNotification('Event not found', 'error');
+        return;
+    }
+
+    const startDate = event.startDate.toDate();
+    const endDate = event.endDate.toDate();
+    
+    const editFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Event: ${event.name}</h3>
+            <form id="editEventForm" class="admin-form">
+                <div class="form-group">
+                    <label for="editEventName">Event Name *</label>
+                    <input type="text" id="editEventName" name="eventName" value="${event.name || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editEventSport">Sport Category *</label>
+                    <select id="editEventSport" name="eventSport" required>
+                        <option value="">Select Sport</option>
+                        <option value="futsal" ${event.sport === 'futsal' ? 'selected' : ''}>Futsal</option>
+                        <option value="cricket" ${event.sport === 'cricket' ? 'selected' : ''}>Cricket</option>
+                        <option value="basketball" ${event.sport === 'basketball' ? 'selected' : ''}>Basketball</option>
+                        <option value="throwball" ${event.sport === 'throwball' ? 'selected' : ''}>Throwball</option>
+                        <option value="volleyball" ${event.sport === 'volleyball' ? 'selected' : ''}>Volleyball</option>
+                        <option value="dodgeball" ${event.sport === 'dodgeball' ? 'selected' : ''}>Dodgeball</option>
+                        <option value="badminton" ${event.sport === 'badminton' ? 'selected' : ''}>Badminton</option>
+                        <option value="chess" ${event.sport === 'chess' ? 'selected' : ''}>Chess</option>
+                        <option value="ludo" ${event.sport === 'ludo' ? 'selected' : ''}>Ludo</option>
+                        <option value="carrom" ${event.sport === 'carrom' ? 'selected' : ''}>Carrom</option>
+                        <option value="scavengerHunt" ${event.sport === 'scavengerHunt' ? 'selected' : ''}>Scavenger Hunt</option>
+                        <option value="gaming" ${event.sport === 'gaming' ? 'selected' : ''}>Gaming</option>
+                        <option value="tableTennis" ${event.sport === 'tableTennis' ? 'selected' : ''}>Table Tennis</option>
+                        <option value="athletics" ${event.sport === 'athletics' ? 'selected' : ''}>Athletics</option>
+                        <option value="strongmen" ${event.sport === 'strongmen' ? 'selected' : ''}>Strongmen</option>
+                        <option value="tugOfWar" ${event.sport === 'tugOfWar' ? 'selected' : ''}>Tug of War</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editStartDate">Start Date *</label>
+                        <input type="datetime-local" id="editStartDate" name="startDate" value="${startDate.toISOString().slice(0, 16)}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEndDate">End Date *</label>
+                        <input type="datetime-local" id="editEndDate" name="endDate" value="${endDate.toISOString().slice(0, 16)}" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editEventVenue">Venue *</label>
+                    <input type="text" id="editEventVenue" name="eventVenue" value="${event.venue || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editEventDescription">Description</label>
+                    <textarea id="editEventDescription" name="eventDescription" rows="3">${event.description || ''}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editMaxTeams">Maximum Teams</label>
+                    <input type="number" id="editMaxTeams" name="maxTeams" min="1" value="${event.maxTeams || 16}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editEventStatus">Status</label>
+                    <select id="editEventStatus" name="eventStatus">
+                        <option value="upcoming" ${event.status === 'upcoming' ? 'selected' : ''}>Upcoming</option>
+                        <option value="ongoing" ${event.status === 'ongoing' ? 'selected' : ''}>Ongoing</option>
+                        <option value="completed" ${event.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="cancelled" ${event.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(editFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('editEventForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const updateData = {
+            name: formData.get('eventName'),
+            sport: formData.get('eventSport'),
+            startDate: new Date(formData.get('startDate')),
+            endDate: new Date(formData.get('endDate')),
+            venue: formData.get('eventVenue'),
+            description: formData.get('eventDescription'),
+            maxTeams: parseInt(formData.get('maxTeams')) || 16,
+            status: formData.get('eventStatus'),
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('events').doc(eventId).update(updateData);
+            showNotification('Event updated successfully!', 'success');
+            closeModal();
+            loadEvents(); // Refresh events list
+        } catch (error) {
+            console.error('Error updating event:', error);
+            showNotification('Error updating event', 'error');
+        }
+    });
 }
 
 async function deleteEvent(eventId) {
@@ -709,8 +1033,225 @@ function showEventDetails(event) {
 }
 
 // Results management functions
+function createResult() {
+    const resultFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-plus-circle"></i> Add Tournament Result</h3>
+            <form id="resultForm" class="admin-form">
+                <div class="form-group">
+                    <label for="resultTeam">Team *</label>
+                    <select id="resultTeam" name="teamId" required>
+                        <option value="">Select Team</option>
+                        ${teamsData.map(team => `<option value="${team.id}">${team.teamName}</option>`).join('')}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultSport">Sport Category *</label>
+                    <select id="resultSport" name="sport" required>
+                        <option value="">Select Sport</option>
+                        <option value="futsal">Futsal</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="basketball">Basketball</option>
+                        <option value="throwball">Throwball</option>
+                        <option value="volleyball">Volleyball</option>
+                        <option value="dodgeball">Dodgeball</option>
+                        <option value="badminton">Badminton</option>
+                        <option value="chess">Chess</option>
+                        <option value="ludo">Ludo</option>
+                        <option value="carrom">Carrom</option>
+                        <option value="scavengerHunt">Scavenger Hunt</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="tableTennis">Table Tennis</option>
+                        <option value="athletics">Athletics</option>
+                        <option value="strongmen">Strongmen</option>
+                        <option value="tugOfWar">Tug of War</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultScore">Score/Result *</label>
+                    <input type="text" id="resultScore" name="score" placeholder="e.g., 3-1, 1st Place, 15.5 seconds" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultPosition">Position</label>
+                    <input type="number" id="resultPosition" name="position" min="1" placeholder="1, 2, 3...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultDate">Date *</label>
+                    <input type="date" id="resultDate" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultStatus">Status</label>
+                    <select id="resultStatus" name="status">
+                        <option value="final">Final</option>
+                        <option value="provisional">Provisional</option>
+                        <option value="disqualified">Disqualified</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultNotes">Notes</label>
+                    <textarea id="resultNotes" name="notes" rows="3" placeholder="Additional notes about the result"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Result</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(resultFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('resultForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const selectedTeam = teamsData.find(t => t.id === formData.get('teamId'));
+        
+        const resultData = {
+            teamId: formData.get('teamId'),
+            teamName: selectedTeam ? selectedTeam.teamName : 'Unknown Team',
+            sport: formData.get('sport'),
+            score: formData.get('score'),
+            position: parseInt(formData.get('position')) || null,
+            date: new Date(formData.get('date')),
+            status: formData.get('resultStatus'),
+            notes: formData.get('resultNotes'),
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('results').add(resultData);
+            showNotification('Result added successfully!', 'success');
+            closeModal();
+            loadResults(); // Refresh results list
+        } catch (error) {
+            console.error('Error adding result:', error);
+            showNotification('Error adding result', 'error');
+        }
+    });
+}
+
 function editResult(resultId) {
-    showNotification('Result editing feature coming soon!', 'info');
+    const result = resultsData.find(r => r.id === resultId);
+    if (!result) {
+        showNotification('Result not found', 'error');
+        return;
+    }
+
+    const resultDate = result.date.toDate();
+    
+    const editFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Result</h3>
+            <form id="editResultForm" class="admin-form">
+                <div class="form-group">
+                    <label for="editResultTeam">Team *</label>
+                    <select id="editResultTeam" name="teamId" required>
+                        <option value="">Select Team</option>
+                        ${teamsData.map(team => `<option value="${team.id}" ${result.teamId === team.id ? 'selected' : ''}>${team.teamName}</option>`).join('')}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultSport">Sport Category *</label>
+                    <select id="editResultSport" name="sport" required>
+                        <option value="">Select Sport</option>
+                        <option value="futsal" ${result.sport === 'futsal' ? 'selected' : ''}>Futsal</option>
+                        <option value="cricket" ${result.sport === 'cricket' ? 'selected' : ''}>Cricket</option>
+                        <option value="basketball" ${result.sport === 'basketball' ? 'selected' : ''}>Basketball</option>
+                        <option value="throwball" ${result.sport === 'throwball' ? 'selected' : ''}>Throwball</option>
+                        <option value="volleyball" ${result.sport === 'volleyball' ? 'selected' : ''}>Volleyball</option>
+                        <option value="dodgeball" ${result.sport === 'dodgeball' ? 'selected' : ''}>Dodgeball</option>
+                        <option value="badminton" ${result.sport === 'badminton' ? 'selected' : ''}>Badminton</option>
+                        <option value="chess" ${result.sport === 'chess' ? 'selected' : ''}>Chess</option>
+                        <option value="ludo" ${result.sport === 'ludo' ? 'selected' : ''}>Ludo</option>
+                        <option value="carrom" ${result.sport === 'carrom' ? 'selected' : ''}>Carrom</option>
+                        <option value="scavengerHunt" ${result.sport === 'scavengerHunt' ? 'selected' : ''}>Scavenger Hunt</option>
+                        <option value="gaming" ${result.sport === 'gaming' ? 'selected' : ''}>Gaming</option>
+                        <option value="tableTennis" ${result.sport === 'tableTennis' ? 'selected' : ''}>Table Tennis</option>
+                        <option value="athletics" ${result.sport === 'athletics' ? 'selected' : ''}>Athletics</option>
+                        <option value="strongmen" ${result.sport === 'strongmen' ? 'selected' : ''}>Strongmen</option>
+                        <option value="tugOfWar" ${result.sport === 'tugOfWar' ? 'selected' : ''}>Tug of War</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultScore">Score/Result *</label>
+                    <input type="text" id="editResultScore" name="score" value="${result.score || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultPosition">Position</label>
+                    <input type="number" id="editResultPosition" name="position" min="1" value="${result.position || ''}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultDate">Date *</label>
+                    <input type="date" id="editResultDate" name="date" value="${resultDate.toISOString().split('T')[0]}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultStatus">Status</label>
+                    <select id="editResultStatus" name="status">
+                        <option value="final" ${result.status === 'final' ? 'selected' : ''}>Final</option>
+                        <option value="provisional" ${result.status === 'provisional' ? 'selected' : ''}>Provisional</option>
+                        <option value="disqualified" ${result.status === 'disqualified' ? 'selected' : ''}>Disqualified</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editResultNotes">Notes</label>
+                    <textarea id="editResultNotes" name="notes" rows="3">${result.notes || ''}</textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Result</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(editFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('editResultForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const selectedTeam = teamsData.find(t => t.id === formData.get('teamId'));
+        
+        const updateData = {
+            teamId: formData.get('teamId'),
+            teamName: selectedTeam ? selectedTeam.teamName : 'Unknown Team',
+            sport: formData.get('sport'),
+            score: formData.get('score'),
+            position: parseInt(formData.get('position')) || null,
+            date: new Date(formData.get('date')),
+            status: formData.get('status'),
+            notes: formData.get('notes'),
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('results').doc(resultId).update(updateData);
+            showNotification('Result updated successfully!', 'success');
+            closeModal();
+            loadResults(); // Refresh results list
+        } catch (error) {
+            console.error('Error updating result:', error);
+            showNotification('Error updating result', 'error');
+        }
+    });
 }
 
 async function deleteResult(resultId) {
@@ -1006,6 +1547,25 @@ style.textContent = `
     .event-details p {
         margin: 0;
         font-size: 0.9rem;
+    }
+    
+    .sports-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .sports-checkboxes label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--pure-white);
+    }
+
+    .sports-checkboxes input[type="checkbox"] {
+        transform: scale(0.9);
     }
     
     @media (max-width: 768px) {

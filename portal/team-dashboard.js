@@ -368,21 +368,21 @@ function getActivityIcon(type) {
 function getSportIcon(sport) {
     const icons = {
         'futsal': 'futbol',
-        'basketball': 'basketball-ball',
-        'tableTennis': 'table-tennis',
-        'armWrestling': 'dumbbell',
-        'athletics': 'running',
-        'swimming': 'swimming-pool',
-        'badminton': 'table-tennis',
-        'volleyball': 'volleyball-ball',
         'cricket': 'cricket',
-        'football': 'futbol',
-        'hockey': 'hockey-puck',
-        'squash': 'table-tennis',
-        'tennis': 'table-tennis',
-        'boxing': 'boxing-glove',
-        'wrestling': 'dumbbell',
-        'weightlifting': 'dumbbell',
+        'basketball': 'basketball-ball',
+        'throwball': 'volleyball-ball',
+        'volleyball': 'volleyball-ball',
+        'dodgeball': 'circle',
+        'badminton': 'table-tennis',
+        'chess': 'chess',
+        'ludo': 'dice',
+        'carrom': 'circle',
+        'scavengerHunt': 'search',
+        'gaming': 'gamepad',
+        'tableTennis': 'table-tennis',
+        'athletics': 'running',
+        'strongmen': 'dumbbell',
+        'tugOfWar': 'grip-lines',
         'default': 'trophy'
     };
     return icons[sport] || icons.default;
@@ -390,14 +390,212 @@ function getSportIcon(sport) {
 
 // Action functions
 function updateTeamInfo() {
-    showNotification('Team info update feature coming soon!', 'info');
+    const updateFormHTML = `
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Update Team Information</h3>
+            <form id="updateTeamForm" class="team-form">
+                <div class="form-group">
+                    <label for="updateTeamName">Team Name *</label>
+                    <input type="text" id="updateTeamName" name="teamName" value="${teamData.teamName || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="updateInstitution">Institution/Organization</label>
+                    <input type="text" id="updateInstitution" name="institution" value="${teamData.institution || ''}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="updateCity">City *</label>
+                    <input type="text" id="updateCity" name="city" value="${teamData.city || ''}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="updateSports">Sports Categories</label>
+                    <div class="sports-checkboxes">
+                        <label><input type="checkbox" name="sports" value="futsal" ${teamData.sports && teamData.sports.includes('futsal') ? 'checked' : ''}> Futsal</label>
+                        <label><input type="checkbox" name="sports" value="cricket" ${teamData.sports && teamData.sports.includes('cricket') ? 'checked' : ''}> Cricket</label>
+                        <label><input type="checkbox" name="sports" value="basketball" ${teamData.sports && teamData.sports.includes('basketball') ? 'checked' : ''}> Basketball</label>
+                        <label><input type="checkbox" name="sports" value="throwball" ${teamData.sports && teamData.sports.includes('throwball') ? 'checked' : ''}> Throwball</label>
+                        <label><input type="checkbox" name="sports" value="volleyball" ${teamData.sports && teamData.sports.includes('volleyball') ? 'checked' : ''}> Volleyball</label>
+                        <label><input type="checkbox" name="sports" value="dodgeball" ${teamData.sports && teamData.sports.includes('dodgeball') ? 'checked' : ''}> Dodgeball</label>
+                        <label><input type="checkbox" name="sports" value="badminton" ${teamData.sports && teamData.sports.includes('badminton') ? 'checked' : ''}> Badminton</label>
+                        <label><input type="checkbox" name="sports" value="chess" ${teamData.sports && teamData.sports.includes('chess') ? 'checked' : ''}> Chess</label>
+                        <label><input type="checkbox" name="sports" value="ludo" ${teamData.sports && teamData.sports.includes('ludo') ? 'checked' : ''}> Ludo</label>
+                        <label><input type="checkbox" name="sports" value="carrom" ${teamData.sports && teamData.sports.includes('carrom') ? 'checked' : ''}> Carrom</label>
+                        <label><input type="checkbox" name="sports" value="scavengerHunt" ${teamData.sports && teamData.sports.includes('scavengerHunt') ? 'checked' : ''}> Scavenger Hunt</label>
+                        <label><input type="checkbox" name="sports" value="gaming" ${teamData.sports && teamData.sports.includes('gaming') ? 'checked' : ''}> Gaming</label>
+                        <label><input type="checkbox" name="sports" value="tableTennis" ${teamData.sports && teamData.sports.includes('tableTennis') ? 'checked' : ''}> Table Tennis</label>
+                        <label><input type="checkbox" name="sports" value="athletics" ${teamData.sports && teamData.sports.includes('athletics') ? 'checked' : ''}> Athletics</label>
+                        <label><input type="checkbox" name="sports" value="strongmen" ${teamData.sports && teamData.sports.includes('strongmen') ? 'checked' : ''}> Strongmen</label>
+                        <label><input type="checkbox" name="sports" value="tugOfWar" ${teamData.sports && teamData.sports.includes('tugOfWar') ? 'checked' : ''}> Tug of War</label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Information</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    showModal(updateFormHTML);
+    
+    // Add form submission handler
+    document.getElementById('updateTeamForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const selectedSports = formData.getAll('sports');
+        
+        const updateData = {
+            teamName: formData.get('teamName'),
+            institution: formData.get('institution'),
+            city: formData.get('city'),
+            sports: selectedSports,
+            updatedAt: new Date()
+        };
+        
+        try {
+            await db.collection('teams').doc(currentUser.uid).update(updateData);
+            showNotification('Team information updated successfully!', 'success');
+            closeModal();
+            loadTeamData(); // Refresh team data
+        } catch (error) {
+            console.error('Error updating team info:', error);
+            showNotification('Error updating team information', 'error');
+        }
+    });
 }
 
 function viewSchedule() {
+    // Load events for the team's sports
+    loadTeamSchedule();
+    
     // Switch to schedule section
     const scheduleBtn = document.querySelector('[data-section="schedule"]');
     if (scheduleBtn) {
         scheduleBtn.click();
+    }
+}
+
+async function loadTeamSchedule() {
+    try {
+        const scheduleContainer = document.getElementById('scheduleContainer');
+        if (!scheduleContainer) return;
+        
+        scheduleContainer.innerHTML = '<div class="loading">Loading schedule...</div>';
+        
+        // Get events for the team's sports
+        const teamSports = teamData.sports || [];
+        if (teamSports.length === 0) {
+            scheduleContainer.innerHTML = '<div class="no-data">No sports selected. Please update your team information.</div>';
+            return;
+        }
+        
+        const eventsSnapshot = await db.collection('events')
+            .where('sport', 'in', teamSports)
+            .where('status', 'in', ['upcoming', 'ongoing'])
+            .orderBy('startDate')
+            .get();
+        
+        const events = [];
+        eventsSnapshot.forEach(doc => {
+            events.push({ id: doc.id, ...doc.data() });
+        });
+        
+        if (events.length === 0) {
+            scheduleContainer.innerHTML = '<div class="no-data">No upcoming events found for your selected sports.</div>';
+            return;
+        }
+        
+        const scheduleHTML = events.map(event => {
+            const startDate = event.startDate.toDate();
+            const endDate = event.endDate.toDate();
+            
+            return `
+                <div class="schedule-item">
+                    <div class="schedule-header">
+                        <h4><i class="fas fa-${getSportIcon(event.sport)}"></i> ${event.name}</h4>
+                        <span class="event-status ${event.status}">${event.status}</span>
+                    </div>
+                    <div class="schedule-details">
+                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> ${startDate.toLocaleDateString()}</p>
+                        <p><i class="fas fa-clock"></i> <strong>Time:</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Venue:</strong> ${event.venue || 'TBD'}</p>
+                        <p><i class="fas fa-users"></i> <strong>Teams:</strong> ${event.participatingTeams ? event.participatingTeams.length : 0}/${event.maxTeams || '∞'}</p>
+                        ${event.description ? `<p><i class="fas fa-info-circle"></i> <strong>Description:</strong> ${event.description}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        scheduleContainer.innerHTML = scheduleHTML;
+        
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+        document.getElementById('scheduleContainer').innerHTML = '<div class="error">Error loading schedule. Please try again.</div>';
+    }
+}
+
+function viewResults() {
+    // Load team results
+    loadTeamResults();
+    
+    // Switch to results section
+    const resultsBtn = document.querySelector('[data-section="results"]');
+    if (resultsBtn) {
+        resultsBtn.click();
+    }
+}
+
+async function loadTeamResults() {
+    try {
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (!resultsContainer) return;
+        
+        resultsContainer.innerHTML = '<div class="loading">Loading results...</div>';
+        
+        // Get results for this team
+        const resultsSnapshot = await db.collection('results')
+            .where('teamId', '==', currentUser.uid)
+            .orderBy('date', 'desc')
+            .get();
+        
+        const results = [];
+        resultsSnapshot.forEach(doc => {
+            results.push({ id: doc.id, ...doc.data() });
+        });
+        
+        if (results.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-data">No results found yet. Check back after participating in events!</div>';
+            return;
+        }
+        
+        const resultsHTML = results.map(result => {
+            const resultDate = result.date.toDate();
+            
+            return `
+                <div class="result-item">
+                    <div class="result-header">
+                        <h4><i class="fas fa-${getSportIcon(result.sport)}"></i> ${result.sport}</h4>
+                        <span class="result-status ${result.status}">${result.status}</span>
+                    </div>
+                    <div class="result-details">
+                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> ${resultDate.toLocaleDateString()}</p>
+                        <p><i class="fas fa-trophy"></i> <strong>Score/Result:</strong> ${result.score}</p>
+                        ${result.position ? `<p><i class="fas fa-medal"></i> <strong>Position:</strong> ${result.position}</p>` : ''}
+                        ${result.notes ? `<p><i class="fas fa-info-circle"></i> <strong>Notes:</strong> ${result.notes}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        resultsContainer.innerHTML = resultsHTML;
+        
+    } catch (error) {
+        console.error('Error loading results:', error);
+        document.getElementById('resultsContainer').innerHTML = '<div class="error">Error loading results. Please try again.</div>';
     }
 }
 
@@ -714,6 +912,46 @@ style.textContent = `
         text-align: center;
         color: rgba(255, 255, 255, 0.6);
         padding: 2rem;
+    }
+    
+    .no-data {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        padding: 2rem;
+    }
+    
+    .error {
+        text-align: center;
+        color: var(--error-red);
+        padding: 2rem;
+    }
+    
+    .event-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .event-status.upcoming {
+        background: #3498db;
+        color: white;
+    }
+    
+    .event-status.ongoing {
+        background: #27ae60;
+        color: white;
+    }
+    
+    .event-status.completed {
+        background: #95a5a6;
+        color: white;
+    }
+    
+    .event-status.cancelled {
+        background: #e74c3c;
+        color: white;
     }
     
     @media (max-width: 768px) {
