@@ -2,373 +2,428 @@
 
 let currentUser = null;
 let teamData = null;
-let realTimeListeners = [];
+let teamId = null;
 
+// Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
     initializeDashboard();
 });
 
+// Initialize dashboard functionality
 async function initializeDashboard() {
-    // Check authentication
-    auth.onAuthStateChanged(async function(user) {
-        if (user) {
-            currentUser = user;
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            
-            if (userDoc.exists && userDoc.data().role === 'team') {
+    try {
+        // Check authentication
+        auth.onAuthStateChanged(async function(user) {
+            if (user) {
+                currentUser = user;
+                teamId = user.uid;
                 await loadTeamData();
-                setupNavigation();
-                setupRealTimeListeners();
+                await loadDashboardStats();
+                await loadEvents();
+                await loadResults();
             } else {
-                showNotification('Access denied. Redirecting to portal...', 'error');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
+                // Redirect to login if not authenticated
+                window.location.href = 'team-login.html';
             }
-        } else {
-            window.location.href = 'team-login.html';
-        }
-    });
+        });
+    } catch (error) {
+        console.error('Dashboard initialization error:', error);
+        showNotification('Error loading dashboard. Please try again.', 'error');
+    }
 }
 
+// Load team data
 async function loadTeamData() {
     try {
-        const teamDoc = await db.collection('teams').doc(currentUser.uid).get();
+        const teamDoc = await db.collection('teams').doc(teamId).get();
         if (teamDoc.exists) {
             teamData = teamDoc.data();
-            updateDashboard();
+            displayTeamInfo();
+            displaySportsParticipation();
+            displayTeamMembers();
         } else {
             showNotification('Team data not found. Please contact support.', 'error');
         }
     } catch (error) {
         console.error('Error loading team data:', error);
-        showNotification('Error loading team data', 'error');
+        showNotification('Error loading team data.', 'error');
     }
 }
 
-function updateDashboard() {
+// Display team information
+function displayTeamInfo() {
     if (!teamData) return;
 
-    // Update team name
-    document.getElementById('teamName').textContent = teamData.teamName;
-
-    // Update statistics
-    document.getElementById('totalSports').textContent = teamData.sports ? teamData.sports.length : 0;
-    document.getElementById('totalMembers').textContent = teamData.members ? teamData.members.length + 1 : 1; // +1 for captain
-
-    // Update status
-    document.getElementById('registrationStatus').textContent = teamData.status || 'Pending';
-    document.getElementById('paymentStatus').textContent = teamData.paymentStatus || 'Pending';
-    document.getElementById('lastUpdated').textContent = teamData.updatedAt ? 
-        new Date(teamData.updatedAt.toDate()).toLocaleDateString() : 'N/A';
-
-    // Load section data
-    loadOverviewData();
-    loadTeamInfo();
-    loadSportsParticipation();
-    loadResults();
-    loadSchedule();
+    document.getElementById('teamName').textContent = teamData.teamName || 'Team Dashboard';
+    document.getElementById('teamNameInfo').textContent = teamData.teamName || '-';
+    document.getElementById('institutionInfo').textContent = teamData.institution || '-';
+    document.getElementById('cityInfo').textContent = teamData.city || '-';
+    document.getElementById('categoryInfo').textContent = teamData.teamCategory || '-';
+    document.getElementById('captainInfo').textContent = teamData.captain?.name || '-';
+    
+    // Status badge
+    const statusElement = document.getElementById('statusInfo');
+    const status = teamData.status || 'pending';
+    statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    statusElement.className = `status-badge ${status}`;
 }
 
-function setupNavigation() {
-    const navButtons = document.querySelectorAll('.dashboard-nav-btn[data-section]');
-    const sections = document.querySelectorAll('.dashboard-section');
+// Display sports participation
+function displaySportsParticipation() {
+    if (!teamData || !teamData.sports) return;
 
-    navButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetSection = this.getAttribute('data-section');
-            
-            // Update active states
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            sections.forEach(section => section.classList.remove('active'));
-            
-            this.classList.add('active');
-            document.getElementById(targetSection).classList.add('active');
-        });
+    const sportsList = document.getElementById('sportsList');
+    sportsList.innerHTML = '';
+
+    if (teamData.sports.length === 0) {
+        sportsList.innerHTML = '<p class="no-data">No sports selected. <a href="#" onclick="editSportsParticipation()">Add sports</a></p>';
+        return;
+    }
+
+    const sportsGrid = document.createElement('div');
+    sportsGrid.className = 'sports-grid';
+
+    teamData.sports.forEach(sport => {
+        const sportCard = document.createElement('div');
+        sportCard.className = 'sport-card';
+        sportCard.innerHTML = `
+            <div class="sport-icon">
+                <i class="fas fa-${getSportIcon(sport)}"></i>
+            </div>
+            <div class="sport-name">${sport.charAt(0).toUpperCase() + sport.slice(1).replace('-', ' ')}</div>
+            <div class="sport-status">Registered</div>
+        `;
+        sportsGrid.appendChild(sportCard);
     });
+
+    sportsList.appendChild(sportsGrid);
 }
 
-function setupRealTimeListeners() {
-    // Listen for team data changes
-    const teamListener = db.collection('teams').doc(currentUser.uid)
-        .onSnapshot(function(doc) {
-            if (doc.exists) {
-                teamData = doc.data();
-                updateDashboard();
-            }
-        }, function(error) {
-            console.error('Error listening to team data:', error);
+// Display team members
+function displayTeamMembers() {
+    if (!teamData) return;
+
+    const membersList = document.getElementById('membersList');
+    membersList.innerHTML = '';
+
+    // Captain
+    if (teamData.captain) {
+        const captainCard = document.createElement('div');
+        captainCard.className = 'member-card captain';
+        captainCard.innerHTML = `
+            <div class="member-info">
+                <div class="member-name">
+                    <i class="fas fa-crown"></i>
+                    ${teamData.captain.name}
+                </div>
+                <div class="member-details">
+                    <div class="member-email">${teamData.captain.email}</div>
+                    <div class="member-phone">${teamData.captain.phone}</div>
+                </div>
+            </div>
+            <div class="member-role">Captain</div>
+        `;
+        membersList.appendChild(captainCard);
+    }
+
+    // Team members
+    if (teamData.members && teamData.members.length > 0) {
+        teamData.members.forEach((member, index) => {
+            const memberCard = document.createElement('div');
+            memberCard.className = 'member-card';
+            memberCard.innerHTML = `
+                <div class="member-info">
+                    <div class="member-name">${member.name}</div>
+                    <div class="member-details">
+                        <div class="member-phone">${member.phone}</div>
+                        <div class="member-cnic">${member.cnic}</div>
+                    </div>
+                </div>
+                <div class="member-role">Member ${index + 1}</div>
+            `;
+            membersList.appendChild(memberCard);
         });
+    }
 
-    realTimeListeners.push(teamListener);
+    if (!teamData.members || teamData.members.length === 0) {
+        membersList.innerHTML = '<p class="no-data">No additional team members. <a href="#" onclick="editTeamMembers()">Add members</a></p>';
+    }
 }
 
-async function loadOverviewData() {
+// Load dashboard statistics
+async function loadDashboardStats() {
     try {
-        // Load recent activity
-        const activitySnapshot = await db.collection('team_activity')
-            .where('teamId', '==', currentUser.uid)
-            .orderBy('timestamp', 'desc')
-            .limit(5)
+        // Total sports
+        const totalSports = teamData?.sports?.length || 0;
+        document.getElementById('totalSports').textContent = totalSports;
+
+        // Total members (captain + members)
+        const totalMembers = 1 + (teamData?.members?.length || 0);
+        document.getElementById('totalMembers').textContent = totalMembers;
+
+        // Active events (events where team is participating)
+        const activeEventsSnapshot = await db.collection('events')
+            .where('participatingTeams', 'array-contains', teamId)
+            .where('status', '==', 'active')
             .get();
+        document.getElementById('activeEvents').textContent = activeEventsSnapshot.size;
 
-        const activityList = document.getElementById('recentActivity');
-        if (activitySnapshot.empty) {
-            activityList.innerHTML = '<div class="activity-item">No recent activity</div>';
-        } else {
-            activityList.innerHTML = '';
-            activitySnapshot.forEach(doc => {
-                const activity = doc.data();
-                const activityItem = document.createElement('div');
-                activityItem.className = 'activity-item';
-                activityItem.innerHTML = `
-                    <i class="fas fa-${getActivityIcon(activity.type)}"></i>
-                    <span>${activity.description}</span>
-                    <small>${new Date(activity.timestamp.toDate()).toLocaleDateString()}</small>
-                `;
-                activityList.appendChild(activityItem);
-            });
-        }
+        // Completed events
+        const completedEventsSnapshot = await db.collection('events')
+            .where('participatingTeams', 'array-contains', teamId)
+            .where('status', '==', 'completed')
+            .get();
+        document.getElementById('completedEvents').textContent = completedEventsSnapshot.size;
 
-        // Load event counts
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+    }
+}
+
+// Load events
+async function loadEvents() {
+    try {
         const eventsSnapshot = await db.collection('events')
-            .where('participatingTeams', 'array-contains', currentUser.uid)
+            .where('participatingTeams', 'array-contains', teamId)
+            .orderBy('startDate', 'desc')
+            .limit(10)
             .get();
 
-        let completedCount = 0;
-        let upcomingCount = 0;
-        const now = new Date();
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = '';
+
+        if (eventsSnapshot.empty) {
+            eventsList.innerHTML = '<p class="no-data">No events scheduled yet.</p>';
+            return;
+        }
 
         eventsSnapshot.forEach(doc => {
             const event = doc.data();
-            if (event.endDate && event.endDate.toDate() < now) {
-                completedCount++;
-            } else {
-                upcomingCount++;
-            }
-        });
-
-        document.getElementById('completedEvents').textContent = completedCount;
-        document.getElementById('upcomingEvents').textContent = upcomingCount;
-
-    } catch (error) {
-        console.error('Error loading overview data:', error);
-    }
-}
-
-function loadTeamInfo() {
-    if (!teamData) return;
-
-    const teamInfo = document.getElementById('teamInfo');
-    teamInfo.innerHTML = `
-        <div class="info-grid">
-            <div class="info-section">
-                <h4>Basic Information</h4>
-                <div class="info-item">
-                    <span class="info-label">Team Name:</span>
-                    <span class="info-value">${teamData.teamName}</span>
+            const eventCard = document.createElement('div');
+            eventCard.className = 'event-card';
+            eventCard.innerHTML = `
+                <div class="event-header">
+                    <h4>${event.name}</h4>
+                    <span class="event-status ${event.status}">${event.status}</span>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Category:</span>
-                    <span class="info-value">${teamData.teamCategory || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Institution:</span>
-                    <span class="info-value">${teamData.institution || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">City:</span>
-                    <span class="info-value">${teamData.city || 'N/A'}</span>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <h4>Captain Information</h4>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">${teamData.captain?.name || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Phone:</span>
-                    <span class="info-value">${teamData.captain?.phone || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Age:</span>
-                    <span class="info-value">${teamData.captain?.age || 'N/A'}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">CNIC:</span>
-                    <span class="info-value">${teamData.captain?.cnic || 'N/A'}</span>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <h4>Team Members (${teamData.members?.length || 0})</h4>
-                ${teamData.members ? teamData.members.map((member, index) => `
-                    <div class="member-item">
-                        <div class="member-name">${index + 1}. ${member.name}</div>
-                        <div class="member-details">
-                            <span>Age: ${member.age}</span>
-                            <span>Phone: ${member.phone}</span>
-                        </div>
+                <div class="event-details">
+                    <div class="event-info">
+                        <i class="fas fa-trophy"></i>
+                        <span>${event.sport}</span>
                     </div>
-                `).join('') : '<p>No additional members</p>'}
-            </div>
-        </div>
-    `;
-}
-
-async function loadSportsParticipation() {
-    try {
-        const participationSnapshot = await db.collection('sports_participation')
-            .where('teamId', '==', currentUser.uid)
-            .get();
-
-        const sportsContainer = document.getElementById('sportsParticipation');
-        
-        if (participationSnapshot.empty) {
-            sportsContainer.innerHTML = '<p>No sports participation found</p>';
-            return;
-        }
-
-        let sportsHTML = '<div class="sports-grid">';
-        participationSnapshot.forEach(doc => {
-            const participation = doc.data();
-            sportsHTML += `
-                <div class="sport-card">
-                    <div class="sport-header">
-                        <i class="fas fa-${getSportIcon(participation.sport)}"></i>
-                        <h4>${participation.sport}</h4>
+                    <div class="event-info">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formatDate(event.startDate)}</span>
                     </div>
-                    <div class="sport-status">
-                        <span class="status-badge ${participation.status}">${participation.status}</span>
-                    </div>
-                    <div class="sport-details">
-                        <p>Team: ${participation.teamName}</p>
-                        <p>Registered: ${new Date(participation.createdAt.toDate()).toLocaleDateString()}</p>
+                    <div class="event-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${event.venue || 'TBA'}</span>
                     </div>
                 </div>
             `;
+            eventsList.appendChild(eventCard);
         });
-        sportsHTML += '</div>';
-        
-        sportsContainer.innerHTML = sportsHTML;
 
     } catch (error) {
-        console.error('Error loading sports participation:', error);
-        document.getElementById('sportsParticipation').innerHTML = '<p>Error loading sports data</p>';
+        console.error('Error loading events:', error);
+        document.getElementById('eventsList').innerHTML = '<p class="error">Error loading events.</p>';
     }
 }
 
+// Load results
 async function loadResults() {
     try {
         const resultsSnapshot = await db.collection('results')
-            .where('teamId', '==', currentUser.uid)
+            .where('teamId', '==', teamId)
             .orderBy('date', 'desc')
+            .limit(10)
             .get();
 
-        const resultsContainer = document.getElementById('resultsContainer');
-        
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = '';
+
         if (resultsSnapshot.empty) {
-            resultsContainer.innerHTML = '<p>No results available yet</p>';
+            resultsList.innerHTML = '<p class="no-data">No results available yet.</p>';
             return;
         }
 
-        let resultsHTML = '<div class="results-list">';
         resultsSnapshot.forEach(doc => {
             const result = doc.data();
-            resultsHTML += `
-                <div class="result-item">
-                    <div class="result-header">
-                        <h4>${result.sport}</h4>
-                        <span class="result-date">${new Date(result.date.toDate()).toLocaleDateString()}</span>
+            const resultCard = document.createElement('div');
+            resultCard.className = 'result-card';
+            resultCard.innerHTML = `
+                <div class="result-header">
+                    <h4>${result.sport}</h4>
+                    <span class="result-position">${result.position || 'N/A'}</span>
+                </div>
+                <div class="result-details">
+                    <div class="result-info">
+                        <i class="fas fa-medal"></i>
+                        <span>Position: ${result.position || 'N/A'}</span>
                     </div>
-                    <div class="result-details">
-                        <div class="result-score">
-                            <span>Score: ${result.score || 'N/A'}</span>
-                            <span>Position: ${result.position || 'N/A'}</span>
-                        </div>
-                        <div class="result-status">
-                            <span class="status-badge ${result.status}">${result.status}</span>
-                        </div>
+                    <div class="result-info">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Score: ${result.score || 'N/A'}</span>
+                    </div>
+                    <div class="result-info">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formatDate(result.date)}</span>
                     </div>
                 </div>
             `;
+            resultsList.appendChild(resultCard);
         });
-        resultsHTML += '</div>';
-        
-        resultsContainer.innerHTML = resultsHTML;
 
     } catch (error) {
         console.error('Error loading results:', error);
-        document.getElementById('resultsContainer').innerHTML = '<p>Error loading results</p>';
+        document.getElementById('resultsList').innerHTML = '<p class="error">Error loading results.</p>';
     }
 }
 
-async function loadSchedule() {
-    try {
-        const scheduleSnapshot = await db.collection('events')
-            .where('participatingTeams', 'array-contains', currentUser.uid)
-            .orderBy('startDate')
-            .get();
+// Edit team information
+function editTeamInfo() {
+    if (!teamData) return;
 
-        const scheduleContainer = document.getElementById('scheduleContainer');
+    // Populate form with current data
+    document.getElementById('editTeamName').value = teamData.teamName || '';
+    document.getElementById('editInstitution').value = teamData.institution || '';
+    document.getElementById('editCity').value = teamData.city || '';
+    document.getElementById('editCategory').value = teamData.teamCategory || '';
+
+    // Show modal
+    document.getElementById('editTeamModal').style.display = 'flex';
+}
+
+// Save team information
+async function saveTeamInfo() {
+    try {
+        const updatedData = {
+            teamName: document.getElementById('editTeamName').value,
+            institution: document.getElementById('editInstitution').value,
+            city: document.getElementById('editCity').value,
+            teamCategory: document.getElementById('editCategory').value,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        await db.collection('teams').doc(teamId).update(updatedData);
         
-        if (scheduleSnapshot.empty) {
-            scheduleContainer.innerHTML = '<p>No scheduled events found</p>';
+        // Update local data
+        Object.assign(teamData, updatedData);
+        
+        // Refresh display
+        displayTeamInfo();
+        
+        showNotification('Team information updated successfully!', 'success');
+        closeModal('editTeamModal');
+
+    } catch (error) {
+        console.error('Error updating team info:', error);
+        showNotification('Error updating team information.', 'error');
+    }
+}
+
+// Edit sports participation
+function editSportsParticipation() {
+    if (!teamData) return;
+
+    const editSportsGrid = document.getElementById('editSportsGrid');
+    editSportsGrid.innerHTML = '';
+
+    const sports = [
+        'futsal', 'cricket', 'basketball', 'throwball', 'volleyball',
+        'dodgeball', 'badminton', 'chess', 'ludo', 'carrom',
+        'scavenger-hunt', 'gaming', 'table-tennis', 'athletics',
+        'strongmen', 'tug-of-war'
+    ];
+
+    sports.forEach(sport => {
+        const sportOption = document.createElement('label');
+        sportOption.className = 'sport-option';
+        sportOption.innerHTML = `
+            <input type="checkbox" name="editSports" value="${sport}" ${teamData.sports?.includes(sport) ? 'checked' : ''}>
+            <span class="sport-icon"><i class="fas fa-${getSportIcon(sport)}"></i></span>
+            <span class="sport-name">${sport.charAt(0).toUpperCase() + sport.slice(1).replace('-', ' ')}</span>
+        `;
+        editSportsGrid.appendChild(sportOption);
+    });
+
+    document.getElementById('editSportsModal').style.display = 'flex';
+}
+
+// Save sports participation
+async function saveSportsParticipation() {
+    try {
+        const selectedSports = Array.from(document.querySelectorAll('input[name="editSports"]:checked'))
+            .map(cb => cb.value);
+
+        if (selectedSports.length === 0) {
+            showNotification('Please select at least one sport.', 'error');
             return;
         }
 
-        let scheduleHTML = '<div class="schedule-list">';
-        scheduleSnapshot.forEach(doc => {
-            const event = doc.data();
-            const startDate = event.startDate.toDate();
-            const endDate = event.endDate.toDate();
-            const isUpcoming = startDate > new Date();
-            
-            scheduleHTML += `
-                <div class="schedule-item ${isUpcoming ? 'upcoming' : 'past'}">
-                    <div class="schedule-header">
-                        <h4>${event.sport}</h4>
-                        <span class="schedule-date">${startDate.toLocaleDateString()}</span>
-                    </div>
-                    <div class="schedule-details">
-                        <p><strong>Event:</strong> ${event.name}</p>
-                        <p><strong>Time:</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}</p>
-                        <p><strong>Venue:</strong> ${event.venue || 'TBD'}</p>
-                        <p><strong>Status:</strong> <span class="status-badge ${event.status}">${event.status}</span></p>
-                    </div>
-                </div>
-            `;
+        // Update team document
+        await db.collection('teams').doc(teamId).update({
+            sports: selectedSports,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        scheduleHTML += '</div>';
+
+        // Update sports participation records
+        // Remove old participation records
+        const oldParticipation = await db.collection('sports_participation')
+            .where('teamId', '==', teamId)
+            .get();
         
-        scheduleContainer.innerHTML = scheduleHTML;
+        const batch = db.batch();
+        oldParticipation.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        // Add new participation records
+        const newBatch = db.batch();
+        selectedSports.forEach(sport => {
+            const participationRef = db.collection('sports_participation').doc();
+            newBatch.set(participationRef, {
+                teamId: teamId,
+                teamName: teamData.teamName,
+                sport: sport,
+                status: 'registered',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        await newBatch.commit();
+
+        // Update local data
+        teamData.sports = selectedSports;
+        
+        // Refresh display
+        displaySportsParticipation();
+        await loadDashboardStats();
+        
+        showNotification('Sports participation updated successfully!', 'success');
+        closeModal('editSportsModal');
 
     } catch (error) {
-        console.error('Error loading schedule:', error);
-        document.getElementById('scheduleContainer').innerHTML = '<p>Error loading schedule</p>';
+        console.error('Error updating sports participation:', error);
+        showNotification('Error updating sports participation.', 'error');
     }
 }
 
-// Utility functions
-function getActivityIcon(type) {
-    const icons = {
-        'registration': 'user-plus',
-        'sport_added': 'trophy',
-        'result_updated': 'chart-line',
-        'payment': 'credit-card',
-        'default': 'info-circle'
-    };
-    return icons[type] || icons.default;
+// Edit team members
+function editTeamMembers() {
+    showNotification('Team member editing feature coming soon!', 'info');
 }
 
+// Close modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Utility functions
 function getSportIcon(sport) {
     const icons = {
         'futsal': 'futbol',
-        'cricket': 'cricket',
+        'cricket': 'baseball-ball',
         'basketball': 'basketball-ball',
         'throwball': 'volleyball-ball',
         'volleyball': 'volleyball-ball',
@@ -377,451 +432,103 @@ function getSportIcon(sport) {
         'chess': 'chess',
         'ludo': 'dice',
         'carrom': 'circle',
-        'scavengerHunt': 'search',
+        'scavenger-hunt': 'search',
         'gaming': 'gamepad',
-        'tableTennis': 'table-tennis',
+        'table-tennis': 'table-tennis',
         'athletics': 'running',
         'strongmen': 'dumbbell',
-        'tugOfWar': 'grip-lines',
-        'default': 'trophy'
+        'tug-of-war': 'hand-rock'
     };
-    return icons[sport] || icons.default;
+    return icons[sport] || 'trophy';
 }
 
-// Action functions
-function updateTeamInfo() {
-    const updateFormHTML = `
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Update Team Information</h3>
-            <form id="updateTeamForm" class="team-form">
-                <div class="form-group">
-                    <label for="updateTeamName">Team Name *</label>
-                    <input type="text" id="updateTeamName" name="teamName" value="${teamData.teamName || ''}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="updateInstitution">Institution/Organization</label>
-                    <input type="text" id="updateInstitution" name="institution" value="${teamData.institution || ''}">
-                </div>
-                
-                <div class="form-group">
-                    <label for="updateCity">City *</label>
-                    <input type="text" id="updateCity" name="city" value="${teamData.city || ''}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="updateSports">Sports Categories</label>
-                    <div class="sports-checkboxes">
-                        <label><input type="checkbox" name="sports" value="futsal" ${teamData.sports && teamData.sports.includes('futsal') ? 'checked' : ''}> Futsal</label>
-                        <label><input type="checkbox" name="sports" value="cricket" ${teamData.sports && teamData.sports.includes('cricket') ? 'checked' : ''}> Cricket</label>
-                        <label><input type="checkbox" name="sports" value="basketball" ${teamData.sports && teamData.sports.includes('basketball') ? 'checked' : ''}> Basketball</label>
-                        <label><input type="checkbox" name="sports" value="throwball" ${teamData.sports && teamData.sports.includes('throwball') ? 'checked' : ''}> Throwball</label>
-                        <label><input type="checkbox" name="sports" value="volleyball" ${teamData.sports && teamData.sports.includes('volleyball') ? 'checked' : ''}> Volleyball</label>
-                        <label><input type="checkbox" name="sports" value="dodgeball" ${teamData.sports && teamData.sports.includes('dodgeball') ? 'checked' : ''}> Dodgeball</label>
-                        <label><input type="checkbox" name="sports" value="badminton" ${teamData.sports && teamData.sports.includes('badminton') ? 'checked' : ''}> Badminton</label>
-                        <label><input type="checkbox" name="sports" value="chess" ${teamData.sports && teamData.sports.includes('chess') ? 'checked' : ''}> Chess</label>
-                        <label><input type="checkbox" name="sports" value="ludo" ${teamData.sports && teamData.sports.includes('ludo') ? 'checked' : ''}> Ludo</label>
-                        <label><input type="checkbox" name="sports" value="carrom" ${teamData.sports && teamData.sports.includes('carrom') ? 'checked' : ''}> Carrom</label>
-                        <label><input type="checkbox" name="sports" value="scavengerHunt" ${teamData.sports && teamData.sports.includes('scavengerHunt') ? 'checked' : ''}> Scavenger Hunt</label>
-                        <label><input type="checkbox" name="sports" value="gaming" ${teamData.sports && teamData.sports.includes('gaming') ? 'checked' : ''}> Gaming</label>
-                        <label><input type="checkbox" name="sports" value="tableTennis" ${teamData.sports && teamData.sports.includes('tableTennis') ? 'checked' : ''}> Table Tennis</label>
-                        <label><input type="checkbox" name="sports" value="athletics" ${teamData.sports && teamData.sports.includes('athletics') ? 'checked' : ''}> Athletics</label>
-                        <label><input type="checkbox" name="sports" value="strongmen" ${teamData.sports && teamData.sports.includes('strongmen') ? 'checked' : ''}> Strongmen</label>
-                        <label><input type="checkbox" name="sports" value="tugOfWar" ${teamData.sports && teamData.sports.includes('tugOfWar') ? 'checked' : ''}> Tug of War</label>
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Information</button>
-                </div>
-            </form>
-        </div>
-    `;
-    
-    showModal(updateFormHTML);
-    
-    // Add form submission handler
-    document.getElementById('updateTeamForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const selectedSports = formData.getAll('sports');
-        
-        const updateData = {
-            teamName: formData.get('teamName'),
-            institution: formData.get('institution'),
-            city: formData.get('city'),
-            sports: selectedSports,
-            updatedAt: new Date()
-        };
-        
-        try {
-            await db.collection('teams').doc(currentUser.uid).update(updateData);
-            showNotification('Team information updated successfully!', 'success');
-            closeModal();
-            loadTeamData(); // Refresh team data
-        } catch (error) {
-            console.error('Error updating team info:', error);
-            showNotification('Error updating team information', 'error');
-        }
+function formatDate(timestamp) {
+    if (!timestamp) return 'N/A';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 }
-
-function viewSchedule() {
-    // Load events for the team's sports
-    loadTeamSchedule();
-    
-    // Switch to schedule section
-    const scheduleBtn = document.querySelector('[data-section="schedule"]');
-    if (scheduleBtn) {
-        scheduleBtn.click();
-    }
-}
-
-async function loadTeamSchedule() {
-    try {
-        const scheduleContainer = document.getElementById('scheduleContainer');
-        if (!scheduleContainer) return;
-        
-        scheduleContainer.innerHTML = '<div class="loading">Loading schedule...</div>';
-        
-        // Get events for the team's sports
-        const teamSports = teamData.sports || [];
-        if (teamSports.length === 0) {
-            scheduleContainer.innerHTML = '<div class="no-data">No sports selected. Please update your team information.</div>';
-            return;
-        }
-        
-        const eventsSnapshot = await db.collection('events')
-            .where('sport', 'in', teamSports)
-            .where('status', 'in', ['upcoming', 'ongoing'])
-            .orderBy('startDate')
-            .get();
-        
-        const events = [];
-        eventsSnapshot.forEach(doc => {
-            events.push({ id: doc.id, ...doc.data() });
-        });
-        
-        if (events.length === 0) {
-            scheduleContainer.innerHTML = '<div class="no-data">No upcoming events found for your selected sports.</div>';
-            return;
-        }
-        
-        const scheduleHTML = events.map(event => {
-            const startDate = event.startDate.toDate();
-            const endDate = event.endDate.toDate();
-            
-            return `
-                <div class="schedule-item">
-                    <div class="schedule-header">
-                        <h4><i class="fas fa-${getSportIcon(event.sport)}"></i> ${event.name}</h4>
-                        <span class="event-status ${event.status}">${event.status}</span>
-                    </div>
-                    <div class="schedule-details">
-                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> ${startDate.toLocaleDateString()}</p>
-                        <p><i class="fas fa-clock"></i> <strong>Time:</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}</p>
-                        <p><i class="fas fa-map-marker-alt"></i> <strong>Venue:</strong> ${event.venue || 'TBD'}</p>
-                        <p><i class="fas fa-users"></i> <strong>Teams:</strong> ${event.participatingTeams ? event.participatingTeams.length : 0}/${event.maxTeams || '∞'}</p>
-                        ${event.description ? `<p><i class="fas fa-info-circle"></i> <strong>Description:</strong> ${event.description}</p>` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        scheduleContainer.innerHTML = scheduleHTML;
-        
-    } catch (error) {
-        console.error('Error loading schedule:', error);
-        document.getElementById('scheduleContainer').innerHTML = '<div class="error">Error loading schedule. Please try again.</div>';
-    }
-}
-
-function viewResults() {
-    // Load team results
-    loadTeamResults();
-    
-    // Switch to results section
-    const resultsBtn = document.querySelector('[data-section="results"]');
-    if (resultsBtn) {
-        resultsBtn.click();
-    }
-}
-
-async function loadTeamResults() {
-    try {
-        const resultsContainer = document.getElementById('resultsContainer');
-        if (!resultsContainer) return;
-        
-        resultsContainer.innerHTML = '<div class="loading">Loading results...</div>';
-        
-        // Get results for this team
-        const resultsSnapshot = await db.collection('results')
-            .where('teamId', '==', currentUser.uid)
-            .orderBy('date', 'desc')
-            .get();
-        
-        const results = [];
-        resultsSnapshot.forEach(doc => {
-            results.push({ id: doc.id, ...doc.data() });
-        });
-        
-        if (results.length === 0) {
-            resultsContainer.innerHTML = '<div class="no-data">No results found yet. Check back after participating in events!</div>';
-            return;
-        }
-        
-        const resultsHTML = results.map(result => {
-            const resultDate = result.date.toDate();
-            
-            return `
-                <div class="result-item">
-                    <div class="result-header">
-                        <h4><i class="fas fa-${getSportIcon(result.sport)}"></i> ${result.sport}</h4>
-                        <span class="result-status ${result.status}">${result.status}</span>
-                    </div>
-                    <div class="result-details">
-                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> ${resultDate.toLocaleDateString()}</p>
-                        <p><i class="fas fa-trophy"></i> <strong>Score/Result:</strong> ${result.score}</p>
-                        ${result.position ? `<p><i class="fas fa-medal"></i> <strong>Position:</strong> ${result.position}</p>` : ''}
-                        ${result.notes ? `<p><i class="fas fa-info-circle"></i> <strong>Notes:</strong> ${result.notes}</p>` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        resultsContainer.innerHTML = resultsHTML;
-        
-    } catch (error) {
-        console.error('Error loading results:', error);
-        document.getElementById('resultsContainer').innerHTML = '<div class="error">Error loading results. Please try again.</div>';
-    }
-}
-
-function contactSupport() {
-    window.open('mailto:support@pakistanfutsal.com?subject=Team Support Request', '_blank');
-}
-
-// Cleanup on page unload
-window.addEventListener('beforeunload', function() {
-    realTimeListeners.forEach(unsubscribe => {
-        if (typeof unsubscribe === 'function') {
-            unsubscribe();
-        }
-    });
-});
 
 // Add CSS for dashboard components
 const style = document.createElement('style');
 style.textContent = `
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--royal-gold);
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    .activity-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .activity-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .activity-item:last-child {
-        border-bottom: none;
-    }
-    
-    .activity-item i {
-        color: var(--royal-gold);
-        width: 20px;
-    }
-    
-    .activity-item small {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.8rem;
-        margin-left: auto;
-    }
-    
-    .quick-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .action-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        color: var(--pure-white);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-    }
-    
-    .action-btn:hover {
-        background: var(--royal-gold);
-        color: var(--midnight-navy);
-    }
-    
-    .status-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .status-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .status-item:last-child {
-        border-bottom: none;
-    }
-    
-    .status-label {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.9rem;
-    }
-    
-    .status-value {
-        color: var(--royal-gold);
-        font-weight: 600;
+    .dashboard-container {
+        min-height: 100vh;
+        background: #f8f9fa;
+        padding: 2rem 0;
     }
     
     .dashboard-section {
-        display: none;
+        background: white;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
     
-    .dashboard-section.active {
-        display: block;
+    .section-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .section-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .edit-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .edit-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .section-content {
+        padding: 2rem;
     }
     
     .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-    
-    .info-section h4 {
-        color: var(--royal-gold);
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-    }
-    
-    .info-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .info-item:last-child {
-        border-bottom: none;
-    }
-    
-    .info-label {
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 500;
-    }
-    
-    .info-value {
-        color: var(--pure-white);
-        font-weight: 600;
-    }
-    
-    .member-item {
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-    }
-    
-    .member-name {
-        font-weight: 600;
-        color: var(--pure-white);
-        margin-bottom: 0.25rem;
-    }
-    
-    .member-details {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .sports-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
     }
     
-    .sport-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .sport-header {
+    .info-item {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: 0.5rem;
-        margin-bottom: 0.75rem;
     }
     
-    .sport-header i {
-        color: var(--royal-gold);
-        font-size: 1.2rem;
+    .info-item label {
+        font-weight: 600;
+        color: #7f8c8d;
+        font-size: 0.9rem;
     }
     
-    .sport-header h4 {
-        color: var(--pure-white);
-        margin: 0;
-        text-transform: capitalize;
-    }
-    
-    .sport-status {
-        margin-bottom: 0.75rem;
+    .info-item span {
+        color: #2c3e50;
+        font-size: 1.1rem;
     }
     
     .status-badge {
@@ -832,135 +539,295 @@ style.textContent = `
         text-transform: uppercase;
     }
     
-    .status-badge.registered {
+    .status-badge.pending {
+        background: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .status-badge.approved {
+        background: #f0f9ff;
+        color: #27ae60;
+    }
+    
+    .status-badge.rejected {
+        background: #fdf2f2;
+        color: #e74c3c;
+    }
+    
+    .sports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
+    .sport-card {
+        background: #f8f9fa;
+        border: 2px solid #ecf0f1;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .sport-card:hover {
+        border-color: #3498db;
+        background: #e3f2fd;
+    }
+    
+    .sport-icon {
+        width: 40px;
+        height: 40px;
         background: #3498db;
         color: white;
-    }
-    
-    .status-badge.active {
-        background: #27ae60;
-        color: white;
-    }
-    
-    .status-badge.completed {
-        background: #95a5a6;
-        color: white;
-    }
-    
-    .status-badge.pending {
-        background: #f39c12;
-        color: white;
-    }
-    
-    .sport-details p {
-        margin: 0.25rem 0;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    .results-list, .schedule-list {
+        border-radius: 50%;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .sport-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .sport-status {
+        font-size: 0.8rem;
+        color: #27ae60;
+        font-weight: 600;
+    }
+    
+    .members-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1rem;
     }
     
-    .result-item, .schedule-item {
-        background: rgba(255, 255, 255, 0.05);
+    .member-card {
+        background: #f8f9fa;
+        border: 1px solid #ecf0f1;
         border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .result-header, .schedule-header {
+        padding: 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.75rem;
     }
     
-    .result-header h4, .schedule-header h4 {
-        color: var(--royal-gold);
-        margin: 0;
-        text-transform: capitalize;
+    .member-card.captain {
+        border-color: #f39c12;
+        background: #fef9e7;
     }
     
-    .result-date, .schedule-date {
-        color: rgba(255, 255, 255, 0.6);
+    .member-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .member-details {
         font-size: 0.9rem;
+        color: #7f8c8d;
     }
     
-    .result-details {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .member-role {
+        background: #3498db;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
     }
     
-    .result-score {
-        display: flex;
+    .events-list, .results-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1rem;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
     }
     
-    .schedule-details p {
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
+    .event-card, .result-card {
+        background: #f8f9fa;
+        border: 1px solid #ecf0f1;
+        border-radius: 10px;
+        padding: 1.5rem;
     }
     
-    .loading {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.6);
-        padding: 2rem;
+    .event-header, .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
     }
     
-    .no-data {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.6);
-        padding: 2rem;
-    }
-    
-    .error {
-        text-align: center;
-        color: var(--error-red);
-        padding: 2rem;
+    .event-header h4, .result-header h4 {
+        margin: 0;
+        color: #2c3e50;
     }
     
     .event-status {
         padding: 0.25rem 0.75rem;
-        border-radius: 20px;
+        border-radius: 15px;
         font-size: 0.8rem;
         font-weight: 600;
         text-transform: uppercase;
     }
     
+    .event-status.active {
+        background: #f0f9ff;
+        color: #3498db;
+    }
+    
+    .event-status.completed {
+        background: #f0f9ff;
+        color: #27ae60;
+    }
+    
     .event-status.upcoming {
+        background: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .event-details, .result-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .event-info, .result-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .result-position {
+        background: #f39c12;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .no-data, .error {
+        text-align: center;
+        color: #7f8c8d;
+        padding: 2rem;
+        font-style: italic;
+    }
+    
+    .error {
+        color: #e74c3c;
+    }
+    
+    .no-data a {
+        color: #3498db;
+        text-decoration: none;
+    }
+    
+    .no-data a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background 0.3s ease;
+    }
+    
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-body {
+        padding: 2rem;
+    }
+    
+    .modal-footer {
+        padding: 1.5rem;
+        border-top: 1px solid #ecf0f1;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn.primary {
         background: #3498db;
         color: white;
     }
     
-    .event-status.ongoing {
-        background: #27ae60;
-        color: white;
+    .btn.primary:hover {
+        background: #2980b9;
     }
     
-    .event-status.completed {
+    .btn.secondary {
         background: #95a5a6;
         color: white;
     }
     
-    .event-status.cancelled {
-        background: #e74c3c;
-        color: white;
+    .btn.secondary:hover {
+        background: #7f8c8d;
     }
     
     @media (max-width: 768px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
+        .dashboard-stats {
+            grid-template-columns: repeat(2, 1fr);
         }
         
         .info-grid {
@@ -968,14 +835,16 @@ style.textContent = `
         }
         
         .sports-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .members-list {
             grid-template-columns: 1fr;
         }
         
-        .result-details {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+        .events-list, .results-list {
+            grid-template-columns: 1fr;
         }
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

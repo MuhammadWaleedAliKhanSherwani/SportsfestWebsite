@@ -24,7 +24,7 @@
             <ul class="nav-menu">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="index.html">Portal</a></li>
-                <li><a href="../index.html#contact">Contact</a></li>
+                <li><a href="#" onclick="signOut()">Sign Out</a></li>
             </ul>
             <div class="nav-toggle">
                 <span class="bar"></span>
@@ -36,151 +36,195 @@
 
     <!-- Dashboard Container -->
     <div class="dashboard-container">
-        <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <div class="dashboard-title">
-                <h1>Team Dashboard</h1>
-                <p id="teamName">Loading team information...</p>
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span id="teamName">Team Dashboard</span>
+                </div>
+                <div class="dashboard-subtitle">
+                    Welcome to your team management portal
+                </div>
+                
+                <!-- Dashboard Stats -->
+                <div class="dashboard-stats">
+                    <div class="dashboard-stat">
+                        <h3 id="totalSports">0</h3>
+                        <p>Sports Registered</p>
+                    </div>
+                    <div class="dashboard-stat">
+                        <h3 id="totalMembers">0</h3>
+                        <p>Team Members</p>
+                    </div>
+                    <div class="dashboard-stat">
+                        <h3 id="activeEvents">0</h3>
+                        <p>Active Events</p>
+                    </div>
+                    <div class="dashboard-stat">
+                        <h3 id="completedEvents">0</h3>
+                        <p>Completed Events</p>
+                    </div>
+                </div>
             </div>
-            <div class="dashboard-nav">
-                <a href="#" class="dashboard-nav-btn active" data-section="overview">
-                    <i class="fas fa-tachometer-alt"></i> Overview
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="team">
-                    <i class="fas fa-users"></i> Team Info
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="sports">
-                    <i class="fas fa-trophy"></i> Sports
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="results">
-                    <i class="fas fa-chart-line"></i> Results
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="schedule">
-                    <i class="fas fa-calendar-alt"></i> Schedule
-                </a>
-                <button onclick="signOut()" class="dashboard-nav-btn">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Team Information -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-info-circle"></i> Team Information</h2>
+                        <button class="edit-btn" onclick="editTeamInfo()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Team Name:</label>
+                                <span id="teamNameInfo">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Institution:</label>
+                                <span id="institutionInfo">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>City:</label>
+                                <span id="cityInfo">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Category:</label>
+                                <span id="categoryInfo">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Captain:</label>
+                                <span id="captainInfo">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Status:</label>
+                                <span id="statusInfo" class="status-badge">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sports Participation -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Sports Participation</h2>
+                        <button class="edit-btn" onclick="editSportsParticipation()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div id="sportsList" class="sports-list">
+                            <!-- Sports will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Members -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users"></i> Team Members</h2>
+                        <button class="edit-btn" onclick="editTeamMembers()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div id="membersList" class="members-list">
+                            <!-- Members will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events & Schedule -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-calendar-alt"></i> Events & Schedule</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="eventsList" class="events-list">
+                            <!-- Events will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results & Scores -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-medal"></i> Results & Scores</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="resultsList" class="results-list">
+                            <!-- Results will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Dashboard Content -->
-        <div class="dashboard-content">
-            <!-- Overview Section -->
-            <div class="dashboard-section active" id="overview">
-                <div class="dashboard-grid">
-                    <!-- Team Stats -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-chart-bar"></i> Team Statistics</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-number" id="totalSports">0</div>
-                                <div class="stat-label">Sports Categories</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="totalMembers">0</div>
-                                <div class="stat-label">Team Members</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="completedEvents">0</div>
-                                <div class="stat-label">Completed Events</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="upcomingEvents">0</div>
-                                <div class="stat-label">Upcoming Events</div>
-                            </div>
-                        </div>
+    <!-- Edit Team Modal -->
+    <div id="editTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Team Information</h3>
+                <button class="close-btn" onclick="closeModal('editTeamModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editTeamForm">
+                    <div class="form-group">
+                        <label for="editTeamName">Team Name</label>
+                        <input type="text" id="editTeamName" required>
                     </div>
+                    <div class="form-group">
+                        <label for="editInstitution">Institution</label>
+                        <input type="text" id="editInstitution" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCity">City</label>
+                        <input type="text" id="editCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategory">Category</label>
+                        <select id="editCategory" required>
+                            <option value="university">University</option>
+                            <option value="college">College</option>
+                            <option value="school">School</option>
+                            <option value="club">Sports Club</option>
+                            <option value="corporate">Corporate</option>
+                            <option value="community">Community</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('editTeamModal')">Cancel</button>
+                <button class="btn primary" onclick="saveTeamInfo()">Save Changes</button>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Recent Activity -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                        <div class="activity-list" id="recentActivity">
-                            <div class="activity-item">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Loading recent activity...</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="action-btn" onclick="updateTeamInfo()">
-                                <i class="fas fa-edit"></i>
-                                Update Team Info
-                            </button>
-                            <button class="action-btn" onclick="viewSchedule()">
-                                <i class="fas fa-calendar"></i>
-                                View Schedule
-                            </button>
-                            <button class="action-btn" onclick="contactSupport()">
-                                <i class="fas fa-headset"></i>
-                                Contact Support
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Team Status -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-info-circle"></i> Team Status</h3>
-                        <div class="status-info">
-                            <div class="status-item">
-                                <span class="status-label">Registration Status:</span>
-                                <span class="status-value" id="registrationStatus">Loading...</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">Payment Status:</span>
-                                <span class="status-value" id="paymentStatus">Loading...</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">Last Updated:</span>
-                                <span class="status-value" id="lastUpdated">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Edit Sports Modal -->
+    <div id="editSportsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Sports Participation</h3>
+                <button class="close-btn" onclick="closeModal('editSportsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="sports-grid" id="editSportsGrid">
+                    <!-- Sports checkboxes will be loaded dynamically -->
                 </div>
             </div>
-
-            <!-- Team Info Section -->
-            <div class="dashboard-section" id="team">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-users"></i> Team Information</h3>
-                    <div class="team-info" id="teamInfo">
-                        <div class="loading">Loading team information...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sports Section -->
-            <div class="dashboard-section" id="sports">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-trophy"></i> Sports Participation</h3>
-                    <div class="sports-participation" id="sportsParticipation">
-                        <div class="loading">Loading sports information...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div class="dashboard-section" id="results">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-chart-line"></i> Results & Progress</h3>
-                    <div class="results-container" id="resultsContainer">
-                        <div class="loading">Loading results...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Schedule Section -->
-            <div class="dashboard-section" id="schedule">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-calendar-alt"></i> Event Schedule</h3>
-                    <div class="schedule-container" id="scheduleContainer">
-                        <div class="loading">Loading schedule...</div>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('editSportsModal')">Cancel</button>
+                <button class="btn primary" onclick="saveSportsParticipation()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -188,6 +232,7 @@
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>
     <script src="auth.js"></script>
+    <script src="portal.js"></script>
     <script src="team-dashboard.js"></script>
 </body>
-</html> 
+</html>

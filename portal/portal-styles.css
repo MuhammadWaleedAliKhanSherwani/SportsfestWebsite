@@ -1,14 +1,13 @@
-/* Portal-specific styles that complement the main website */
+/* Portal-specific styles for Sports Fest Portal */
 
 /* Portal Hero Section */
 .portal-hero {
-    position: relative;
-    min-height: 60vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--midnight-navy) 0%, var(--slate-grey) 100%);
-    margin-top: 80px;
+    position: relative;
+    background: linear-gradient(135deg, #1b2452 0%, #2c3e50 100%);
+    overflow: hidden;
 }
 
 .portal-hero-background {
@@ -17,7 +16,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(212,175,55,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
     opacity: 0.3;
 }
 
@@ -27,66 +26,70 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(27, 36, 82, 0.8) 0%, rgba(46, 46, 58, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(27, 36, 82, 0.9) 0%, rgba(44, 62, 80, 0.8) 100%);
 }
 
 .portal-hero-content {
     position: relative;
     z-index: 2;
     text-align: center;
+    color: white;
     max-width: 800px;
-    padding: 0 20px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .portal-hero-title {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 800;
     margin-bottom: 1rem;
-    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .portal-title-main {
     display: block;
-    color: var(--royal-gold);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #3498db;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 }
 
 .portal-title-sub {
     display: block;
-    color: var(--pure-white);
+    color: #e74c3c;
     font-size: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-top: 0.5rem;
 }
 
 .portal-hero-description {
-    font-size: 1.2rem;
-    color: var(--pure-white);
+    font-size: 1.3rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    line-height: 1.6;
 }
 
-/* Portal Selection Section */
+/* Portal Selection */
 .portal-selection {
-    padding: 4rem 0;
-    background: var(--pure-white);
-    color: var(--midnight-navy);
+    padding: 5rem 0;
+    background: #f8f9fa;
 }
 
 .portal-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 3rem;
-    margin-top: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .portal-card {
-    background: linear-gradient(135deg, var(--midnight-navy) 0%, var(--slate-grey) 100%);
+    background: white;
     border-radius: 20px;
-    padding: 3rem 2rem;
+    padding: 3rem;
     text-align: center;
-    color: var(--pure-white);
-    box-shadow: 0 20px 40px rgba(27, 36, 82, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    border: 2px solid transparent;
     position: relative;
     overflow: hidden;
 }
@@ -96,47 +99,46 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(176, 141, 87, 0.1) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.portal-card:hover::before {
-    opacity: 1;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #e74c3c);
 }
 
 .portal-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 30px 60px rgba(27, 36, 82, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    border-color: #3498db;
 }
 
 .portal-card-icon {
     width: 80px;
     height: 80px;
-    background: var(--gold-gradient);
+    margin: 0 auto 2rem;
+    background: linear-gradient(135deg, #3498db, #2980b9);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 2rem;
     font-size: 2rem;
-    color: var(--midnight-navy);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+    color: white;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+}
+
+.admin-portal .portal-card-icon {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
 }
 
 .portal-card h2 {
     font-size: 2rem;
-    font-weight: 700;
     margin-bottom: 1rem;
-    color: var(--royal-gold);
+    color: #2c3e50;
 }
 
 .portal-card p {
     font-size: 1.1rem;
+    color: #7f8c8d;
     margin-bottom: 2rem;
-    opacity: 0.9;
     line-height: 1.6;
 }
 
@@ -147,74 +149,81 @@
 .portal-features .feature {
     display: flex;
     align-items: center;
-    margin-bottom: 0.8rem;
-    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
 }
 
 .portal-features .feature i {
-    color: var(--royal-gold);
-    margin-right: 0.8rem;
-    font-size: 1rem;
+    color: #27ae60;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+}
+
+.portal-features .feature span {
+    color: #2c3e50;
+    font-weight: 500;
 }
 
 .portal-btn {
     display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
     padding: 1rem 2rem;
+    border: none;
     border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
     font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .portal-btn.primary {
-    background: var(--gold-gradient);
-    color: var(--midnight-navy);
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
 }
 
 .portal-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 15px 30px rgba(52, 152, 219, 0.4);
 }
 
 .portal-btn.secondary {
-    background: transparent;
-    color: var(--royal-gold);
-    border-color: var(--royal-gold);
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
 }
 
 .portal-btn.secondary:hover {
-    background: var(--royal-gold);
-    color: var(--midnight-navy);
     transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(231, 76, 60, 0.4);
 }
 
-.portal-btn i {
-    margin-right: 0.5rem;
-}
-
-/* Portal Stats Section */
+/* Portal Stats */
 .portal-stats {
     padding: 4rem 0;
-    background: linear-gradient(135deg, var(--midnight-navy) 0%, var(--slate-grey) 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .stat-card {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 2rem;
     text-align: center;
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
@@ -227,49 +236,58 @@
 .stat-icon {
     width: 60px;
     height: 60px;
-    background: var(--gold-gradient);
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #3498db, #2980b9);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
     font-size: 1.5rem;
-    color: var(--midnight-navy);
+    color: white;
 }
 
 .stat-content h3 {
     font-size: 2.5rem;
     font-weight: 800;
-    color: var(--royal-gold);
     margin-bottom: 0.5rem;
+    color: #3498db;
 }
 
 .stat-content p {
-    font-size: 1rem;
-    color: var(--pure-white);
+    font-size: 1.1rem;
     opacity: 0.9;
+    margin: 0;
 }
 
-/* Authentication Forms */
+/* Authentication Styles */
 .auth-container {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--midnight-navy) 0%, var(--slate-grey) 100%);
+    background: linear-gradient(135deg, #1b2452 0%, #2c3e50 100%);
     padding: 2rem;
-    margin-top: 80px;
 }
 
 .auth-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
+    background: white;
     border-radius: 20px;
     padding: 3rem;
-    width: 100%;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
     max-width: 450px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #e74c3c);
 }
 
 .auth-header {
@@ -279,54 +297,48 @@
 
 .auth-header h1 {
     font-size: 2rem;
-    font-weight: 700;
-    color: var(--royal-gold);
+    color: #2c3e50;
     margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .auth-header p {
-    color: var(--pure-white);
-    opacity: 0.8;
+    color: #7f8c8d;
+    font-size: 1.1rem;
 }
 
 .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .form-group {
-    position: relative;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--pure-white);
-    font-weight: 500;
+    color: #2c3e50;
+    font-weight: 600;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
     width: 100%;
     padding: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #ecf0f1;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--pure-white);
     font-size: 1rem;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
     outline: none;
-    border-color: var(--royal-gold);
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .auth-btn {
@@ -342,32 +354,32 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .auth-btn.primary {
-    background: var(--gold-gradient);
-    color: var(--midnight-navy);
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
 }
 
 .auth-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
 }
 
 .auth-btn.secondary {
-    background: transparent;
-    color: var(--pure-white);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
 }
 
 .auth-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--royal-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
 }
 
 .auth-divider {
     text-align: center;
-    margin: 1.5rem 0;
+    margin: 2rem 0;
     position: relative;
 }
 
@@ -378,332 +390,89 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.3);
+    background: #ecf0f1;
 }
 
 .auth-divider span {
-    background: var(--midnight-navy);
+    background: white;
     padding: 0 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 600;
 }
 
 .auth-links {
     text-align: center;
-    margin-top: 1.5rem;
+}
+
+.auth-links p {
+    margin-bottom: 0.5rem;
+    color: #7f8c8d;
 }
 
 .auth-links a {
-    color: var(--royal-gold);
+    color: #3498db;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     transition: color 0.3s ease;
 }
 
 .auth-links a:hover {
-    color: var(--pure-white);
+    color: #2980b9;
 }
 
 /* Dashboard Styles */
 .dashboard-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--midnight-navy) 0%, var(--slate-grey) 100%);
-    margin-top: 80px;
-    padding: 2rem;
+    background: #f8f9fa;
+    padding: 2rem 0;
 }
 
 .dashboard-header {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 15px;
+    background: white;
     padding: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--royal-gold);
+    font-size: 2.5rem;
+    color: #2c3e50;
     margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .dashboard-subtitle {
-    color: var(--pure-white);
-    opacity: 0.8;
+    color: #7f8c8d;
+    font-size: 1.2rem;
 }
 
-.dashboard-nav {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-.dashboard-nav-btn {
-    padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    color: var(--pure-white);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.dashboard-nav-btn:hover,
-.dashboard-nav-btn.active {
-    background: var(--royal-gold);
-    color: var(--midnight-navy);
-}
-
-.dashboard-content {
+.dashboard-stats {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
-.dashboard-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 15px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dashboard-card h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--royal-gold);
-    margin-bottom: 1rem;
-}
-
-/* Sports Checkboxes */
-.sports-checkboxes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-}
-
-.sports-checkboxes label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--pure-white);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.sports-checkboxes label:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sports-checkboxes input[type="checkbox"] {
-    transform: scale(1.1);
-    accent-color: var(--royal-gold);
-}
-
-/* Schedule Items */
-.schedule-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.schedule-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--royal-gold);
-    transform: translateY(-2px);
-}
-
-.schedule-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.schedule-header h4 {
-    margin: 0;
-    color: var(--royal-gold);
-    font-size: 1.1rem;
-}
-
-.schedule-details p {
-    margin: 0.5rem 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.schedule-details i {
-    width: 20px;
-    color: var(--royal-gold);
-    margin-right: 0.5rem;
-}
-
-/* Result Items */
-.result-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.result-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--royal-gold);
-    transform: translateY(-2px);
-}
-
-.result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.result-header h4 {
-    margin: 0;
-    color: var(--royal-gold);
-    font-size: 1.1rem;
-}
-
-.result-details p {
-    margin: 0.5rem 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.result-details i {
-    width: 20px;
-    color: var(--royal-gold);
-    margin-right: 0.5rem;
-}
-
-/* Event Status Badges */
-.event-status, .result-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.event-status.upcoming, .result-status.final {
+.dashboard-stat {
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white;
-}
-
-.event-status.ongoing, .result-status.provisional {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    color: white;
-}
-
-.event-status.completed {
-    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-    color: white;
-}
-
-.event-status.cancelled, .result-status.disqualified {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-}
-
-/* Form Improvements */
-.admin-form, .team-form {
-    max-width: 100%;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--royal-gold), #d4af37);
-    color: var(--dark-blue);
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #d4af37, var(--royal-gold));
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--pure-white);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Loading and Error States */
-.loading {
+    padding: 1.5rem;
+    border-radius: 15px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.6);
-    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
 }
 
-.no-data {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.6);
-    padding: 2rem;
-    font-style: italic;
+.dashboard-stat h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
-.error {
-    text-align: center;
-    color: #e74c3c;
-    padding: 2rem;
-    background: rgba(231, 76, 60, 0.1);
-    border-radius: 8px;
-    border: 1px solid rgba(231, 76, 60, 0.3);
+.dashboard-stat p {
+    opacity: 0.9;
+    margin: 0;
 }
 
 /* Responsive Design */
@@ -722,7 +491,7 @@
     }
     
     .portal-card {
-        padding: 2rem 1.5rem;
+        padding: 2rem;
     }
     
     .stats-grid {
@@ -733,43 +502,12 @@
         padding: 2rem;
     }
     
-    .dashboard-nav {
-        flex-direction: column;
-    }
-    
-    .dashboard-nav-btn {
-        text-align: center;
-    }
-
-    .form-row {
+    .dashboard-stats {
         grid-template-columns: 1fr;
-    }
-    
-    .sports-checkboxes {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    }
-    
-    .schedule-header, .result-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .btn {
-        width: 100%;
-        justify-content: center;
     }
 }
 
 @media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
     .portal-hero-title {
         font-size: 2rem;
     }
@@ -777,4 +515,16 @@
     .portal-title-sub {
         font-size: 1.5rem;
     }
-} 
+    
+    .portal-cards {
+        padding: 0 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .auth-container {
+        padding: 1rem;
+    }
+}

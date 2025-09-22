@@ -1,71 +1,43 @@
 // Team Registration JavaScript
 
+let memberCount = 0;
+let maxMembers = 9; // Default limit
+
+// Category-based member limits
+const categoryLimits = {
+    'university': 15,
+    'college': 12,
+    'school': 10,
+    'club': 20,
+    'corporate': 15,
+    'community': 12
+};
+
+// Initialize registration form
 document.addEventListener('DOMContentLoaded', function() {
     initializeRegistrationForm();
+    setupPasswordStrength();
+    setupFormValidation();
 });
 
+// Initialize registration form functionality
 function initializeRegistrationForm() {
-    const form = document.getElementById('registrationForm');
-    const addMemberBtn = document.getElementById('addMember');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    const passwordStrength = document.getElementById('passwordStrength');
-
-    let memberCount = 1;
-
-    // Password strength validation
-    passwordInput.addEventListener('input', function() {
-        const password = this.value;
-        const validation = validatePassword(password);
-        
-        if (password.length > 0) {
-            if (validation.isValid) {
-                passwordStrength.textContent = '✅ Strong password';
-                passwordStrength.style.color = '#27ae60';
-            } else {
-                passwordStrength.textContent = '⚠️ ' + validation.errors.join(', ');
-                passwordStrength.style.color = '#f39c12';
-            }
-        } else {
-            passwordStrength.textContent = '';
-        }
-    });
-
-    // Confirm password validation
-    confirmPasswordInput.addEventListener('input', function() {
-        const password = passwordInput.value;
-        const confirmPassword = this.value;
-        
-        if (confirmPassword.length > 0) {
-            if (password === confirmPassword) {
-                this.style.borderColor = '#27ae60';
-                this.style.backgroundColor = 'rgba(39, 174, 96, 0.1)';
-            } else {
-                this.style.borderColor = '#e74c3c';
-                this.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
-            }
-        } else {
-            this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        }
-    });
-
-    // Add member functionality
-    addMemberBtn.addEventListener('click', function() {
-        memberCount++;
-        if (memberCount <= 10) { // Limit to 10 members
-            addMemberRow(memberCount);
-        } else {
-            showNotification('Maximum 10 team members allowed', 'error');
-        }
-    });
+    const registrationForm = document.getElementById('registrationForm');
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    const membersContainer = document.getElementById('membersContainer');
 
     // Form submission
-    form.addEventListener('submit', async function(e) {
+    registrationForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        if (validateForm()) {
-            await registerTeam();
+        await handleRegistration();
+    });
+
+    // Add member button
+    addMemberBtn.addEventListener('click', function() {
+        if (memberCount < maxMembers) {
+            addMemberField();
+        } else {
+            showNotification(`Maximum ${maxMembers} additional members allowed for this category`, 'error');
         }
     });
 
@@ -73,354 +45,526 @@ function initializeRegistrationForm() {
     const phoneInputs = document.querySelectorAll('input[type="tel"]');
     phoneInputs.forEach(input => {
         input.addEventListener('input', function() {
-            let value = this.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                if (value.startsWith('0')) {
-                    value = value.substring(1);
-                }
-                if (value.length <= 10) {
-                    this.value = value;
-                } else {
-                    this.value = value.substring(0, 10);
-                }
-            }
+            this.value = formatPhoneNumber(this.value);
         });
     });
 
     // CNIC formatting
     const cnicInput = document.getElementById('captainCNIC');
-    cnicInput.addEventListener('input', function() {
-        let value = this.value.replace(/\D/g, '');
-        if (value.length <= 13) {
-            if (value.length >= 5) {
-                value = value.substring(0, 5) + '-' + value.substring(5);
-            }
-            if (value.length >= 13) {
-                value = value.substring(0, 13) + '-' + value.substring(13, 14);
-            }
-            this.value = value;
-        }
-    });
-}
-
-function addMemberRow(memberNumber) {
-    const teamMembers = document.getElementById('teamMembers');
-    const memberRow = document.createElement('div');
-    memberRow.className = 'member-row';
-    memberRow.setAttribute('data-member', memberNumber);
-    
-    memberRow.innerHTML = `
-        <div class="form-row">
-            <div class="form-group">
-                <label>Member ${memberNumber} Name *</label>
-                <input type="text" name="member${memberNumber}Name" placeholder="Full name" required>
-            </div>
-            <div class="form-group">
-                <label>Member ${memberNumber} Age *</label>
-                <input type="number" name="member${memberNumber}Age" min="16" max="50" placeholder="Age" required>
-            </div>
-            <div class="form-group">
-                <label>Member ${memberNumber} Phone *</label>
-                <input type="tel" name="member${memberNumber}Phone" placeholder="03xxxxxxxxx" required>
-            </div>
-            <div class="form-group">
-                <button type="button" class="remove-member-btn" onclick="removeMember(${memberNumber})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `;
-    
-    teamMembers.appendChild(memberRow);
-    
-    // Add phone formatting to new input
-    const newPhoneInput = memberRow.querySelector('input[type="tel"]');
-    newPhoneInput.addEventListener('input', function() {
-        let value = this.value.replace(/\D/g, '');
-        if (value.length > 0) {
-            if (value.startsWith('0')) {
-                value = value.substring(1);
-            }
-            if (value.length <= 10) {
-                this.value = value;
-            } else {
-                this.value = value.substring(0, 10);
-            }
-        }
-    });
-}
-
-function removeMember(memberNumber) {
-    const memberRow = document.querySelector(`[data-member="${memberNumber}"]`);
-    if (memberRow) {
-        memberRow.remove();
-        // Renumber remaining members
-        const remainingMembers = document.querySelectorAll('.member-row');
-        remainingMembers.forEach((row, index) => {
-            const newNumber = index + 1;
-            row.setAttribute('data-member', newNumber);
-            const labels = row.querySelectorAll('label');
-            const inputs = row.querySelectorAll('input');
-            
-            labels[0].textContent = `Member ${newNumber} Name *`;
-            labels[1].textContent = `Member ${newNumber} Age *`;
-            labels[2].textContent = `Member ${newNumber} Phone *`;
-            
-            inputs[0].name = `member${newNumber}Name`;
-            inputs[1].name = `member${newNumber}Age`;
-            inputs[2].name = `member${newNumber}Phone`;
+    if (cnicInput) {
+        cnicInput.addEventListener('input', function() {
+            this.value = formatCNIC(this.value);
         });
     }
 }
 
-function validateForm() {
-    const form = document.getElementById('registrationForm');
-    const formData = new FormData(form);
-    
-    // Check if at least one sport is selected
-    const selectedSports = formData.getAll('sports');
-    if (selectedSports.length === 0) {
-        showNotification('Please select at least one sports category', 'error');
-        return false;
-    }
-    
-    // Check password confirmation
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
-    if (password !== confirmPassword) {
-        showNotification('Passwords do not match', 'error');
-        return false;
-    }
-    
-    // Validate password strength
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-        showNotification('Password is too weak. ' + passwordValidation.errors.join(', '), 'error');
-        return false;
-    }
-    
-    // Validate email format
-    const email = formData.get('email');
-    if (!isValidEmail(email)) {
-        showNotification('Please enter a valid email address', 'error');
-        return false;
-    }
-    
-    // Validate phone numbers
-    const captainPhone = formData.get('captainPhone');
-    if (captainPhone.length < 10) {
-        showNotification('Please enter a valid phone number for captain', 'error');
-        return false;
-    }
-    
-    // Validate CNIC format
-    const captainCNIC = formData.get('captainCNIC');
-    if (!/^\d{5}-\d{7}-\d{1}$/.test(captainCNIC)) {
-        showNotification('Please enter a valid CNIC in format: 35202-1234567-8', 'error');
-        return false;
-    }
-    
-    return true;
-}
-
-async function registerTeam() {
+// Handle team registration
+async function handleRegistration() {
     try {
-        showNotification('Creating your team account...', 'info');
+        showNotification('Registering your team...', 'info');
         
-        const form = document.getElementById('registrationForm');
-        const formData = new FormData(form);
+        // Get form data
+        const formData = getFormData();
         
+        // Validate form data
+        const validation = validateFormData(formData);
+        if (!validation.isValid) {
+            showNotification(validation.errors.join(', '), 'error');
+            return;
+        }
+
         // Create user account
-        const email = formData.get('email');
-        const password = formData.get('password');
-        
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await auth.createUserWithEmailAndPassword(
+            formData.captainEmail, 
+            formData.password
+        );
         const user = userCredential.user;
-        
-        // Prepare team data
+
+        // Create team document
         const teamData = {
-            // Account info
-            email: email,
-            teamName: formData.get('teamName'),
-            teamCategory: formData.get('teamCategory'),
-            institution: formData.get('institution'),
-            city: formData.get('city'),
-            
-            // Captain info
+            teamName: formData.teamName,
+            institution: formData.institution,
+            city: formData.city,
+            teamCategory: formData.teamCategory,
             captain: {
-                name: formData.get('captainName'),
-                phone: formatPhoneNumber(formData.get('captainPhone')),
-                age: parseInt(formData.get('captainAge')),
-                cnic: formData.get('captainCNIC')
+                name: formData.captainName,
+                email: formData.captainEmail,
+                phone: formData.captainPhone,
+                cnic: formData.captainCNIC
             },
-            
-            // Team members
-            members: [],
-            
-            // Sports categories
-            sports: formData.getAll('sports'),
-            
-            // Metadata
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            members: formData.members,
+            sports: formData.sports,
             status: 'pending',
-            registrationComplete: false
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
-        
-        // Add team members
-        const memberRows = document.querySelectorAll('.member-row');
-        memberRows.forEach((row, index) => {
-            const memberNumber = index + 1;
-            const member = {
-                name: formData.get(`member${memberNumber}Name`),
-                age: parseInt(formData.get(`member${memberNumber}Age`)),
-                phone: formatPhoneNumber(formData.get(`member${memberNumber}Phone`))
-            };
-            teamData.members.push(member);
-        });
-        
+
+        // Save team data to Firestore
+        await db.collection('teams').add(teamData);
+
         // Create user document
         await createUserDocument(user, 'team', {
-            teamName: teamData.teamName,
+            teamName: formData.teamName,
             teamId: user.uid
         });
-        
-        // Create team document
-        await db.collection('teams').doc(user.uid).set(teamData);
-        
+
         // Create sports participation records
-        for (const sport of teamData.sports) {
+        for (const sport of formData.sports) {
             await db.collection('sports_participation').add({
                 teamId: user.uid,
-                teamName: teamData.teamName,
+                teamName: formData.teamName,
                 sport: sport,
                 status: 'registered',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
+
+        showNotification('Team registered successfully! Redirecting to dashboard...', 'success');
         
-        showNotification('Team registration successful! Redirecting to dashboard...', 'success');
-        
-        // Redirect to team dashboard
         setTimeout(() => {
             window.location.href = 'team-dashboard.html';
         }, 2000);
-        
+
     } catch (error) {
         console.error('Registration error:', error);
         showNotification(getErrorMessage(error.code), 'error');
     }
 }
 
-// Add CSS for form sections
+// Get form data
+function getFormData() {
+    const form = document.getElementById('registrationForm');
+    const formData = new FormData(form);
+    
+    // Get basic team information
+    const data = {
+        teamName: formData.get('teamName'),
+        institution: formData.get('institution'),
+        city: formData.get('city'),
+        teamCategory: formData.get('teamCategory'),
+        captainName: formData.get('captainName'),
+        captainEmail: formData.get('captainEmail'),
+        captainPhone: formData.get('captainPhone'),
+        captainCNIC: formData.get('captainCNIC'),
+        password: formData.get('password'),
+        confirmPassword: formData.get('confirmPassword')
+    };
+
+    // Get selected sports
+    const sportsCheckboxes = document.querySelectorAll('input[name="sports"]:checked');
+    data.sports = Array.from(sportsCheckboxes).map(cb => cb.value);
+
+    // Get team members
+    data.members = [];
+    const memberInputs = document.querySelectorAll('.member-field');
+    memberInputs.forEach(memberInput => {
+        const name = memberInput.querySelector('.member-name').value;
+        const phone = memberInput.querySelector('.member-phone').value;
+        const cnic = memberInput.querySelector('.member-cnic').value;
+        
+        if (name && phone && cnic) {
+            data.members.push({
+                name: name,
+                phone: phone,
+                cnic: cnic
+            });
+        }
+    });
+
+    return data;
+}
+
+// Validate form data
+function validateFormData(data) {
+    const errors = [];
+
+    // Required fields validation
+    if (!data.teamName) errors.push('Team name is required');
+    if (!data.institution) errors.push('Institution is required');
+    if (!data.city) errors.push('City is required');
+    if (!data.teamCategory) errors.push('Team category is required');
+    if (!data.captainName) errors.push('Captain name is required');
+    if (!data.captainEmail) errors.push('Captain email is required');
+    if (!data.captainPhone) errors.push('Captain phone is required');
+    if (!data.captainCNIC) errors.push('Captain CNIC is required');
+    if (!data.password) errors.push('Password is required');
+
+    // Email validation
+    if (data.captainEmail && !isValidEmail(data.captainEmail)) {
+        errors.push('Please enter a valid email address');
+    }
+
+    // Password validation
+    if (data.password) {
+        const passwordValidation = validatePassword(data.password);
+        if (!passwordValidation.isValid) {
+            errors.push(...passwordValidation.errors);
+        }
+    }
+
+    // Password confirmation
+    if (data.password !== data.confirmPassword) {
+        errors.push('Passwords do not match');
+    }
+
+    // Sports selection validation
+    if (!data.sports || data.sports.length === 0) {
+        errors.push('Please select at least one sport');
+    }
+
+    // Phone number validation
+    if (data.captainPhone && !isValidPhoneNumber(data.captainPhone)) {
+        errors.push('Please enter a valid phone number');
+    }
+
+    // CNIC validation
+    if (data.captainCNIC && !isValidCNIC(data.captainCNIC)) {
+        errors.push('Please enter a valid CNIC');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors: errors
+    };
+}
+
+// Update team members limit based on category
+function updateTeamMembersLimit() {
+    const category = document.getElementById('teamCategory').value;
+    maxMembers = categoryLimits[category] || 9;
+    
+    // Update add member button text
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    if (addMemberBtn) {
+        addMemberBtn.innerHTML = `
+            <i class="fas fa-plus"></i>
+            Add Team Member (${maxMembers - memberCount} remaining)
+        `;
+        
+        // Hide button if limit reached
+        if (memberCount >= maxMembers) {
+            addMemberBtn.style.display = 'none';
+        } else {
+            addMemberBtn.style.display = 'block';
+        }
+    }
+}
+
+// Add member field
+function addMemberField() {
+    memberCount++;
+    const membersContainer = document.getElementById('membersContainer');
+    
+    const memberField = document.createElement('div');
+    memberField.className = 'member-field';
+    memberField.innerHTML = `
+        <div class="member-header">
+            <h4>Team Member ${memberCount}</h4>
+            <button type="button" class="remove-member-btn" onclick="removeMemberField(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="member-form">
+            <div class="form-group">
+                <label>Member Name</label>
+                <input type="text" class="member-name" placeholder="Enter member's full name">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" class="member-phone" placeholder="0300-1234567">
+            </div>
+            <div class="form-group">
+                <label>CNIC</label>
+                <input type="text" class="member-cnic" placeholder="12345-1234567-1">
+            </div>
+        </div>
+    `;
+
+    membersContainer.appendChild(memberField);
+
+    // Add phone and CNIC formatting
+    const phoneInput = memberField.querySelector('.member-phone');
+    const cnicInput = memberField.querySelector('.member-cnic');
+    
+    phoneInput.addEventListener('input', function() {
+        this.value = formatPhoneNumber(this.value);
+    });
+    
+    cnicInput.addEventListener('input', function() {
+        this.value = formatCNIC(this.value);
+    });
+
+    // Update add member button
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    if (memberCount >= maxMembers) {
+        addMemberBtn.style.display = 'none';
+    }
+}
+
+// Remove member field
+function removeMemberField(button) {
+    const memberField = button.closest('.member-field');
+    memberField.remove();
+    memberCount--;
+    
+    // Show add member button if under limit
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    if (memberCount < maxMembers) {
+        addMemberBtn.style.display = 'block';
+    }
+}
+
+// Setup password strength indicator
+function setupPasswordStrength() {
+    const passwordInput = document.getElementById('password');
+    const strengthIndicator = document.getElementById('passwordStrength');
+    
+    if (passwordInput && strengthIndicator) {
+        passwordInput.addEventListener('input', function() {
+            const strength = calculatePasswordStrength(this.value);
+            updatePasswordStrengthIndicator(strengthIndicator, strength);
+        });
+    }
+}
+
+// Calculate password strength
+function calculatePasswordStrength(password) {
+    let score = 0;
+    const checks = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        numbers: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    score = Object.values(checks).filter(Boolean).length;
+    
+    return {
+        score: score,
+        checks: checks,
+        level: score < 2 ? 'weak' : score < 4 ? 'medium' : 'strong'
+    };
+}
+
+// Update password strength indicator
+function updatePasswordStrengthIndicator(indicator, strength) {
+    indicator.innerHTML = '';
+    
+    const strengthLevels = [
+        { name: 'Length (8+)', met: strength.checks.length },
+        { name: 'Lowercase', met: strength.checks.lowercase },
+        { name: 'Uppercase', met: strength.checks.uppercase },
+        { name: 'Numbers', met: strength.checks.numbers },
+        { name: 'Special', met: strength.checks.special }
+    ];
+
+    strengthLevels.forEach(level => {
+        const levelDiv = document.createElement('div');
+        levelDiv.className = `strength-level ${level.met ? 'met' : 'not-met'}`;
+        levelDiv.innerHTML = `
+            <i class="fas fa-${level.met ? 'check' : 'times'}"></i>
+            <span>${level.name}</span>
+        `;
+        indicator.appendChild(levelDiv);
+    });
+
+    // Add overall strength indicator
+    const overallDiv = document.createElement('div');
+    overallDiv.className = `strength-overall ${strength.level}`;
+    overallDiv.innerHTML = `
+        <span>Password Strength: ${strength.level.toUpperCase()}</span>
+    `;
+    indicator.appendChild(overallDiv);
+}
+
+// Setup form validation
+function setupFormValidation() {
+    // Real-time validation for required fields
+    const requiredInputs = document.querySelectorAll('input[required], select[required]');
+    requiredInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+    });
+
+    // Password confirmation validation
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    if (confirmPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            if (this.value && this.value !== password) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+}
+
+// Validate individual field
+function validateField(field) {
+    const value = field.value.trim();
+    let isValid = true;
+    let message = '';
+
+    if (field.hasAttribute('required') && !value) {
+        isValid = false;
+        message = 'This field is required';
+    } else if (field.type === 'email' && value && !isValidEmail(value)) {
+        isValid = false;
+        message = 'Please enter a valid email address';
+    } else if (field.type === 'tel' && value && !isValidPhoneNumber(value)) {
+        isValid = false;
+        message = 'Please enter a valid phone number';
+    }
+
+    // Update field appearance
+    field.classList.toggle('invalid', !isValid);
+    field.setCustomValidity(message);
+
+    return isValid;
+}
+
+// Utility functions
+function isValidPhoneNumber(phone) {
+    const phoneRegex = /^(\+92|0)?3\d{9}$/;
+    return phoneRegex.test(phone.replace(/\D/g, ''));
+}
+
+function isValidCNIC(cnic) {
+    const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+    return cnicRegex.test(cnic);
+}
+
+function formatPhoneNumber(phone) {
+    const cleaned = phone.replace(/\D/g, '');
+    
+    if (cleaned.length === 11 && cleaned.startsWith('0')) {
+        return cleaned;
+    } else if (cleaned.length === 10 && cleaned.startsWith('3')) {
+        return '0' + cleaned;
+    } else if (cleaned.length === 12 && cleaned.startsWith('92')) {
+        return '0' + cleaned.substring(2);
+    }
+    
+    return phone;
+}
+
+function formatCNIC(cnic) {
+    const cleaned = cnic.replace(/\D/g, '');
+    
+    if (cleaned.length <= 5) {
+        return cleaned;
+    } else if (cleaned.length <= 12) {
+        return cleaned.substring(0, 5) + '-' + cleaned.substring(5);
+    } else {
+        return cleaned.substring(0, 5) + '-' + cleaned.substring(5, 12) + '-' + cleaned.substring(12, 13);
+    }
+}
+
+// Add CSS for member fields and form sections
 const style = document.createElement('style');
 style.textContent = `
     .form-section {
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.05);
+        background: #f8f9fa;
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left: 4px solid #3498db;
     }
     
     .form-section h3 {
-        color: var(--royal-gold);
+        color: #2c3e50;
         margin-bottom: 1rem;
-        font-size: 1.2rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
     
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .form-row:last-child {
-        margin-bottom: 0;
-    }
-    
-    .section-description {
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 1rem;
+    .form-help {
+        color: #7f8c8d;
         font-size: 0.9rem;
+        margin-bottom: 1rem;
     }
     
     .sports-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
     
-    .sport-checkbox {
+    .sport-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .sport-option:hover {
+        border-color: #3498db;
+        background: #f8f9fa;
+    }
+    
+    .sport-option input[type="checkbox"] {
+        display: none;
+    }
+    
+    .sport-option input[type="checkbox"]:checked + .sport-icon {
+        background: #3498db;
+        color: white;
+    }
+    
+    .sport-option input[type="checkbox"]:checked {
+        border-color: #3498db;
+        background: #e3f2fd;
+    }
+    
+    .sport-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ecf0f1;
         display: flex;
         align-items: center;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        justify-content: center;
+        margin-bottom: 0.5rem;
         transition: all 0.3s ease;
     }
     
-    .sport-checkbox:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: var(--royal-gold);
+    .sport-name {
+        font-weight: 600;
+        color: #2c3e50;
+        text-align: center;
     }
     
-    .sport-checkbox input[type="checkbox"] {
-        margin-right: 0.75rem;
-        transform: scale(1.2);
-    }
-    
-    .sport-checkbox label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        font-weight: 500;
-    }
-    
-    .sport-checkbox i {
-        color: var(--royal-gold);
-        font-size: 1.1rem;
-    }
-    
-    .checkbox-group {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-    
-    .checkbox-group input[type="checkbox"] {
-        margin-top: 0.25rem;
-        transform: scale(1.2);
-    }
-    
-    .checkbox-group label {
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    .checkbox-group a {
-        color: var(--royal-gold);
-        text-decoration: underline;
-    }
-    
-    .password-strength {
-        font-size: 0.8rem;
-        margin-top: 0.25rem;
-        display: block;
-    }
-    
-    .member-row {
+    .member-field {
+        background: white;
+        border: 1px solid #ecf0f1;
+        border-radius: 10px;
+        padding: 1.5rem;
         margin-bottom: 1rem;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+    
+    .member-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .member-header h4 {
+        color: #2c3e50;
+        margin: 0;
     }
     
     .remove-member-btn {
@@ -428,12 +572,12 @@ style.textContent = `
         color: white;
         border: none;
         border-radius: 50%;
-        width: 35px;
-        height: 35px;
-        cursor: pointer;
+        width: 30px;
+        height: 30px;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
         transition: all 0.3s ease;
     }
     
@@ -442,14 +586,118 @@ style.textContent = `
         transform: scale(1.1);
     }
     
+    .member-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .add-member-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .add-member-btn:hover {
+        background: #229954;
+        transform: translateY(-2px);
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        cursor: pointer;
+        margin: 1rem 0;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+        margin: 0;
+    }
+    
+    .password-strength {
+        margin-top: 0.5rem;
+    }
+    
+    .strength-level {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .strength-level.met {
+        color: #27ae60;
+    }
+    
+    .strength-level.not-met {
+        color: #e74c3c;
+    }
+    
+    .strength-overall {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 5px;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .strength-overall.weak {
+        background: #fdf2f2;
+        color: #e74c3c;
+    }
+    
+    .strength-overall.medium {
+        background: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .strength-overall.strong {
+        background: #f0f9ff;
+        color: #27ae60;
+    }
+    
+    .form-group input.invalid {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+    
+    select {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        cursor: pointer;
+    }
+    
+    select:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
     @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
+        .sports-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
         
-        .sports-grid {
+        .member-form {
             grid-template-columns: 1fr;
         }
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);

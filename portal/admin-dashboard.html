@@ -24,7 +24,7 @@
             <ul class="nav-menu">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="index.html">Portal</a></li>
-                <li><a href="../index.html#contact">Contact</a></li>
+                <li><a href="#" onclick="signOut()">Sign Out</a></li>
             </ul>
             <div class="nav-toggle">
                 <span class="bar"></span>
@@ -36,198 +36,287 @@
 
     <!-- Dashboard Container -->
     <div class="dashboard-container">
-        <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <div class="dashboard-title">
-                <h1>Admin Dashboard</h1>
-                <p>Tournament Management & Analytics</p>
-            </div>
-            <div class="dashboard-nav">
-                <a href="#" class="dashboard-nav-btn active" data-section="overview">
-                    <i class="fas fa-tachometer-alt"></i> Overview
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="teams">
-                    <i class="fas fa-users"></i> Teams
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="sports">
-                    <i class="fas fa-trophy"></i> Sports
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="events">
-                    <i class="fas fa-calendar-alt"></i> Events
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="results">
-                    <i class="fas fa-chart-line"></i> Results
-                </a>
-                <a href="#" class="dashboard-nav-btn" data-section="analytics">
-                    <i class="fas fa-chart-bar"></i> Analytics
-                </a>
-                <button onclick="signOut()" class="dashboard-nav-btn">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard Content -->
-        <div class="dashboard-content">
-            <!-- Overview Section -->
-            <div class="dashboard-section active" id="overview">
-                <div class="dashboard-grid">
-                    <!-- Quick Stats -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-chart-bar"></i> Tournament Statistics</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-number" id="totalTeams">0</div>
-                                <div class="stat-label">Total Teams</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="activeEvents">0</div>
-                                <div class="stat-label">Active Events</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="completedEvents">0</div>
-                                <div class="stat-label">Completed Events</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="totalParticipants">0</div>
-                                <div class="stat-label">Total Participants</div>
-                            </div>
-                        </div>
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Admin Dashboard</span>
+                </div>
+                <div class="dashboard-subtitle">
+                    Manage teams, events, and tournament data
+                </div>
+                
+                <!-- Dashboard Stats -->
+                <div class="dashboard-stats">
+                    <div class="dashboard-stat">
+                        <h3 id="totalTeams">0</h3>
+                        <p>Total Teams</p>
                     </div>
-
-                    <!-- Quick Actions -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="action-btn" onclick="exportData()">
-                                <i class="fas fa-download"></i>
-                                Export Data
-                            </button>
-                            <button class="action-btn" onclick="createEvent()">
-                                <i class="fas fa-plus"></i>
-                                Create Event
-                            </button>
-                            <button class="action-btn" onclick="createResult()">
-                                <i class="fas fa-trophy"></i>
-                                Add Result
-                            </button>
-                            <button class="action-btn" onclick="manageTeams()">
-                                <i class="fas fa-users-cog"></i>
-                                Manage Teams
-                            </button>
-                            <button class="action-btn" onclick="viewAnalytics()">
-                                <i class="fas fa-chart-pie"></i>
-                                View Analytics
-                            </button>
-                        </div>
+                    <div class="dashboard-stat">
+                        <h3 id="pendingTeams">0</h3>
+                        <p>Pending Teams</p>
                     </div>
-
-                    <!-- Recent Activity -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                        <div class="activity-list" id="recentActivity">
-                            <div class="activity-item">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Loading recent activity...</span>
-                            </div>
-                        </div>
+                    <div class="dashboard-stat">
+                        <h3 id="totalEvents">0</h3>
+                        <p>Total Events</p>
                     </div>
-
-                    <!-- System Status -->
-                    <div class="dashboard-card">
-                        <h3><i class="fas fa-server"></i> System Status</h3>
-                        <div class="status-info">
-                            <div class="status-item">
-                                <span class="status-label">Database:</span>
-                                <span class="status-value online">Online</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">Authentication:</span>
-                                <span class="status-value online">Online</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">Real-time Updates:</span>
-                                <span class="status-value online">Active</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">Last Backup:</span>
-                                <span class="status-value" id="lastBackup">Today</span>
-                            </div>
-                        </div>
+                    <div class="dashboard-stat">
+                        <h3 id="activeEvents">0</h3>
+                        <p>Active Events</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Teams Section -->
-            <div class="dashboard-section" id="teams">
-                <div class="dashboard-card">
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Teams Management -->
+                <div class="dashboard-section">
                     <div class="section-header">
-                        <h3><i class="fas fa-users"></i> Team Management</h3>
+                        <h2><i class="fas fa-users"></i> Teams Management</h2>
                         <div class="section-actions">
-                            <input type="text" id="teamSearch" placeholder="Search teams..." class="search-input">
-                            <select id="teamFilter" class="filter-select">
-                                <option value="">All Categories</option>
-                                <option value="university">University</option>
-                                <option value="college">College</option>
-                                <option value="school">School</option>
-                                <option value="club">Sports Club</option>
-                                <option value="corporate">Corporate</option>
-                                <option value="amateur">Amateur</option>
-                            </select>
                             <button class="action-btn" onclick="exportTeams()">
                                 <i class="fas fa-download"></i> Export
                             </button>
+                            <button class="action-btn" onclick="refreshTeams()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
                         </div>
                     </div>
-                    <div class="teams-container" id="teamsContainer">
-                        <div class="loading">Loading teams...</div>
+                    <div class="section-content">
+                        <!-- Filters -->
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label>Status:</label>
+                                <select id="statusFilter" onchange="filterTeams()">
+                                    <option value="">All</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Category:</label>
+                                <select id="categoryFilter" onchange="filterTeams()">
+                                    <option value="">All</option>
+                                    <option value="university">University</option>
+                                    <option value="college">College</option>
+                                    <option value="school">School</option>
+                                    <option value="club">Sports Club</option>
+                                    <option value="corporate">Corporate</option>
+                                    <option value="community">Community</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>City:</label>
+                                <input type="text" id="cityFilter" placeholder="Filter by city" onkeyup="filterTeams()">
+                            </div>
+                            <div class="filter-group">
+                                <label>Search:</label>
+                                <input type="text" id="searchFilter" placeholder="Search teams..." onkeyup="filterTeams()">
+                            </div>
+                        </div>
+                        
+                        <!-- Teams Table -->
+                        <div class="table-container">
+                            <table class="teams-table">
+                                <thead>
+                                    <tr>
+                                        <th>Team Name</th>
+                                        <th>Institution</th>
+                                        <th>City</th>
+                                        <th>Category</th>
+                                        <th>Captain</th>
+                                        <th>Sports</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teamsTableBody">
+                                    <!-- Teams will be loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sports Section -->
-            <div class="dashboard-section" id="sports">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-trophy"></i> Sports Categories Overview</h3>
-                    <div class="sports-overview" id="sportsOverview">
-                        <div class="loading">Loading sports data...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Events Section -->
-            <div class="dashboard-section" id="events">
-                <div class="dashboard-card">
+                <!-- Events Management -->
+                <div class="dashboard-section">
                     <div class="section-header">
-                        <h3><i class="fas fa-calendar-alt"></i> Event Management</h3>
-                        <button class="action-btn" onclick="createEvent()">
-                            <i class="fas fa-plus"></i> Create Event
-                        </button>
+                        <h2><i class="fas fa-calendar-alt"></i> Events Management</h2>
+                        <div class="section-actions">
+                            <button class="action-btn primary" onclick="createEvent()">
+                                <i class="fas fa-plus"></i> Create Event
+                            </button>
+                        </div>
                     </div>
-                    <div class="events-container" id="eventsContainer">
-                        <div class="loading">Loading events...</div>
+                    <div class="section-content">
+                        <div id="eventsList" class="events-grid">
+                            <!-- Events will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Management -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-medal"></i> Results Management</h2>
+                        <div class="section-actions">
+                            <button class="action-btn primary" onclick="addResult()">
+                                <i class="fas fa-plus"></i> Add Result
+                            </button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div id="resultsList" class="results-grid">
+                            <!-- Results will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Results Section -->
-            <div class="dashboard-section" id="results">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-chart-line"></i> Results Management</h3>
-                    <div class="results-management" id="resultsManagement">
-                        <div class="loading">Loading results...</div>
-                    </div>
+    <!-- Team Details Modal -->
+    <div id="teamDetailsModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Team Details</h3>
+                <button class="close-btn" onclick="closeModal('teamDetailsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="teamDetailsContent">
+                    <!-- Team details will be loaded dynamically -->
                 </div>
             </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('teamDetailsModal')">Close</button>
+                <button class="btn primary" onclick="approveTeam()">Approve Team</button>
+                <button class="btn danger" onclick="rejectTeam()">Reject Team</button>
+            </div>
+        </div>
+    </div>
 
-            <!-- Analytics Section -->
-            <div class="dashboard-section" id="analytics">
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-chart-bar"></i> Tournament Analytics</h3>
-                    <div class="analytics-container" id="analyticsContainer">
-                        <div class="loading">Loading analytics...</div>
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Event</h3>
+                <button class="close-btn" onclick="closeModal('createEventModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createEventForm">
+                    <div class="form-group">
+                        <label for="eventName">Event Name</label>
+                        <input type="text" id="eventName" required>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="eventSport">Sport</label>
+                        <select id="eventSport" required>
+                            <option value="">Select Sport</option>
+                            <option value="futsal">Futsal</option>
+                            <option value="cricket">Cricket</option>
+                            <option value="basketball">Basketball</option>
+                            <option value="throwball">Throwball</option>
+                            <option value="volleyball">Volleyball</option>
+                            <option value="dodgeball">Dodgeball</option>
+                            <option value="badminton">Badminton</option>
+                            <option value="chess">Chess</option>
+                            <option value="ludo">Ludo</option>
+                            <option value="carrom">Carrom</option>
+                            <option value="scavenger-hunt">Scavenger Hunt</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="table-tennis">Table Tennis</option>
+                            <option value="athletics">Athletics</option>
+                            <option value="strongmen">Strongmen</option>
+                            <option value="tug-of-war">Tug of War</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventStartDate">Start Date</label>
+                        <input type="datetime-local" id="eventStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventEndDate">End Date</label>
+                        <input type="datetime-local" id="eventEndDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventVenue">Venue</label>
+                        <input type="text" id="eventVenue" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('createEventModal')">Cancel</button>
+                <button class="btn primary" onclick="saveEvent()">Create Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Result Modal -->
+    <div id="addResultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Result</h3>
+                <button class="close-btn" onclick="closeModal('addResultModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addResultForm">
+                    <div class="form-group">
+                        <label for="resultTeam">Team</label>
+                        <select id="resultTeam" required>
+                            <option value="">Select Team</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resultSport">Sport</label>
+                        <select id="resultSport" required>
+                            <option value="">Select Sport</option>
+                            <option value="futsal">Futsal</option>
+                            <option value="cricket">Cricket</option>
+                            <option value="basketball">Basketball</option>
+                            <option value="throwball">Throwball</option>
+                            <option value="volleyball">Volleyball</option>
+                            <option value="dodgeball">Dodgeball</option>
+                            <option value="badminton">Badminton</option>
+                            <option value="chess">Chess</option>
+                            <option value="ludo">Ludo</option>
+                            <option value="carrom">Carrom</option>
+                            <option value="scavenger-hunt">Scavenger Hunt</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="table-tennis">Table Tennis</option>
+                            <option value="athletics">Athletics</option>
+                            <option value="strongmen">Strongmen</option>
+                            <option value="tug-of-war">Tug of War</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resultScore">Score</label>
+                        <input type="text" id="resultScore" placeholder="e.g., 3-1, 150 points">
+                    </div>
+                    <div class="form-group">
+                        <label for="resultPosition">Position</label>
+                        <input type="number" id="resultPosition" placeholder="1, 2, 3..." min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="resultDate">Date</label>
+                        <input type="datetime-local" id="resultDate" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('addResultModal')">Cancel</button>
+                <button class="btn primary" onclick="saveResult()">Add Result</button>
             </div>
         </div>
     </div>
@@ -235,6 +324,7 @@
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>
     <script src="auth.js"></script>
+    <script src="portal.js"></script>
     <script src="admin-dashboard.js"></script>
 </body>
-</html> 
+</html>
