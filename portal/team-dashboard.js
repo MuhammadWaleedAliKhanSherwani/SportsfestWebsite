@@ -1,6 +1,6 @@
 // Team Dashboard JavaScript
 
-let currentUser = null;
+let teamUser = null;
 let teamData = null;
 let teamId = null;
 
@@ -45,7 +45,7 @@ async function initializeDashboard() {
         // Check authentication
         auth.onAuthStateChanged(async function(user) {
             if (user) {
-                currentUser = user;
+                teamUser = user;
                 teamId = user.uid;
                 await loadTeamData();
                 await loadDashboardStats();
