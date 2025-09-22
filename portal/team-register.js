@@ -135,8 +135,8 @@ async function handleRegistration() {
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Save team data to Firestore
-        await db.collection('teams').add(teamData);
+        // Save team data to Firestore using user's UID as document ID
+        await db.collection('teams').doc(user.uid).set(teamData);
 
         // Create sports participation records
         for (const sport of formData.sports) {

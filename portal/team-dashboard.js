@@ -4,6 +4,36 @@ let currentUser = null;
 let teamData = null;
 let teamId = null;
 
+// Show notification function
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
     initializeDashboard();
@@ -461,6 +491,7 @@ style.textContent = `
         min-height: 100vh;
         background: #f8f9fa;
         padding: 2rem 0;
+        color: #2c3e50;
     }
     
     .dashboard-section {
@@ -469,6 +500,7 @@ style.textContent = `
         margin-bottom: 2rem;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        color: #2c3e50;
     }
     
     .section-header {
@@ -506,6 +538,7 @@ style.textContent = `
     
     .section-content {
         padding: 2rem;
+        color: #2c3e50;
     }
     
     .info-grid {
@@ -527,8 +560,9 @@ style.textContent = `
     }
     
     .info-item span {
-        color: #2c3e50;
+        color: #2c3e50 !important;
         font-size: 1.1rem;
+        font-weight: 500;
     }
     
     .status-badge {
@@ -589,7 +623,7 @@ style.textContent = `
     
     .sport-name {
         font-weight: 600;
-        color: #2c3e50;
+        color: #2c3e50 !important;
         margin-bottom: 0.5rem;
     }
     
@@ -622,7 +656,7 @@ style.textContent = `
     
     .member-name {
         font-weight: 600;
-        color: #2c3e50;
+        color: #2c3e50 !important;
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -665,7 +699,7 @@ style.textContent = `
     
     .event-header h4, .result-header h4 {
         margin: 0;
-        color: #2c3e50;
+        color: #2c3e50 !important;
     }
     
     .event-status {
@@ -845,6 +879,155 @@ style.textContent = `
         .events-list, .results-list {
             grid-template-columns: 1fr;
         }
+    }
+    
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        max-width: 400px;
+        min-width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideInRight 0.3s ease-out;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        position: relative;
+    }
+    
+    .notification-success {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+    }
+    
+    .notification-error {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+    
+    .notification-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: white;
+    }
+    
+    .notification-info {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+    
+    .notification-content i {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .notification-content span {
+        flex: 1;
+        font-weight: 500;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .notification-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .notification {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+            min-width: auto;
+        }
+    }
+    
+    /* Ensure all text is visible */
+    * {
+        color: inherit;
+    }
+    
+    .dashboard-container * {
+        color: #2c3e50;
+    }
+    
+    .dashboard-container h1, 
+    .dashboard-container h2, 
+    .dashboard-container h3, 
+    .dashboard-container h4, 
+    .dashboard-container h5, 
+    .dashboard-container h6 {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container p, 
+    .dashboard-container span, 
+    .dashboard-container div {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container .section-content * {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container .info-item * {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container .sport-card * {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container .member-card * {
+        color: #2c3e50 !important;
+    }
+    
+    .dashboard-container .event-card *,
+    .dashboard-container .result-card * {
+        color: #2c3e50 !important;
+    }
+    
+    /* Override any white text */
+    .dashboard-container .section-content,
+    .dashboard-container .section-content *,
+    .dashboard-container .info-grid,
+    .dashboard-container .info-grid *,
+    .dashboard-container .sports-grid,
+    .dashboard-container .sports-grid *,
+    .dashboard-container .members-list,
+    .dashboard-container .members-list * {
+        color: #2c3e50 !important;
     }
 `;
 document.head.appendChild(style);
