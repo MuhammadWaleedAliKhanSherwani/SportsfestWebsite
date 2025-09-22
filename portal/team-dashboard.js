@@ -77,7 +77,8 @@ async function loadTeamData() {
             displayTeamMembers();
         } else {
             console.log('Team document not found');
-            showNotification('Team data not found. Please contact support.', 'error');
+            showNotification('Team data not found. You can create it now or contact support.', 'error');
+            showCreateTeamDataOption();
         }
     } catch (error) {
         console.error('Error loading team data:', error);
@@ -1116,6 +1117,76 @@ dashboardStyle.textContent = `
     .dashboard-container .members-list * {
         color: #2c3e50 !important;
     }
+    
+    /* Create team data section */
+    .create-team-section {
+        margin: 2rem 0;
+    }
+    
+    .create-team-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-left: 4px solid #e74c3c;
+    }
+    
+    .create-team-card h2 {
+        color: #e74c3c;
+        margin-bottom: 1rem;
+    }
+    
+    .create-team-card ul {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+    }
+    
+    .create-team-card li {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    .create-team-actions {
+        display: flex;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .create-team-actions .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .create-team-actions .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+    
+    .create-team-actions .btn-primary:hover {
+        background: #2980b9;
+    }
+    
+    .create-team-actions .btn-secondary {
+        background: #95a5a6;
+        color: white;
+    }
+    
+    .create-team-actions .btn-secondary:hover {
+        background: #7f8c8d;
+    }
+    
+    .create-team-help {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+        color: #2c3e50;
+    }
 `;
 document.head.appendChild(dashboardStyle);
 
@@ -1139,3 +1210,77 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Team dashboard functions loaded and available globally');
 });
+
+// Show option to create missing team data
+function showCreateTeamDataOption() {
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    if (dashboardContainer) {
+        const createTeamSection = document.createElement('div');
+        createTeamSection.className = 'create-team-section';
+        createTeamSection.innerHTML = `
+            <div class="create-team-card">
+                <h2><i class="fas fa-exclamation-triangle"></i> Team Data Missing</h2>
+                <p>Your team data was not found. This can happen if:</p>
+                <ul>
+                    <li>The registration process was interrupted</li>
+                    <li>There was an error during team creation</li>
+                    <li>The team document was accidentally deleted</li>
+                </ul>
+                <div class="create-team-actions">
+                    <button class="btn btn-primary" onclick="createBasicTeamData()">
+                        <i class="fas fa-plus"></i> Create Basic Team Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='team-register.html'">
+                        <i class="fas fa-edit"></i> Re-register Team
+                    </button>
+                </div>
+                <p class="create-team-help">
+                    <strong>Option 1:</strong> Create basic team data with minimal information<br>
+                    <strong>Option 2:</strong> Go through registration again (recommended)
+                </p>
+            </div>
+        `;
+        dashboardContainer.appendChild(createTeamSection);
+    }
+}
+
+// Create basic team data
+async function createBasicTeamData() {
+    try {
+        showNotification('Creating basic team data...', 'info');
+        
+        const basicTeamData = {
+            teamName: 'My Team',
+            institution: 'My Institution',
+            city: 'My City',
+            teamCategory: 'university',
+            captain: {
+                name: teamUser.displayName || 'Team Captain',
+                email: teamUser.email,
+                phone: 'Not provided',
+                cnic: 'Not provided'
+            },
+            members: [],
+            sports: ['football'],
+            status: 'active',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('teams').doc(teamId).set(basicTeamData);
+        
+        showNotification('Basic team data created! Please edit to add your details.', 'success');
+        
+        // Reload the dashboard
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error creating basic team data:', error);
+        showNotification('Error creating team data. Please try re-registration.', 'error');
+    }
+}
+
+// Make the new function globally accessible
+window.createBasicTeamData = createBasicTeamData;
