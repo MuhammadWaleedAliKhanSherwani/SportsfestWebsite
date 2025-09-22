@@ -75,8 +75,11 @@
                     <div class="section-header">
                         <h2><i class="fas fa-users"></i> Teams Management</h2>
                         <div class="section-actions">
-                            <button class="action-btn" onclick="exportTeams()">
-                                <i class="fas fa-download"></i> Export
+                            <button class="action-btn" onclick="exportTeamData()">
+                                <i class="fas fa-download"></i> Export Teams
+                            </button>
+                            <button class="action-btn" onclick="exportTeamResults()">
+                                <i class="fas fa-trophy"></i> Export Results
                             </button>
                             <button class="action-btn" onclick="refreshTeams()">
                                 <i class="fas fa-sync"></i> Refresh
@@ -273,44 +276,41 @@
             <div class="modal-body">
                 <form id="addResultForm">
                     <div class="form-group">
-                        <label for="resultTeam">Team</label>
-                        <select id="resultTeam" required>
+                        <label for="resultTeamSelect">Team *</label>
+                        <select id="resultTeamSelect" required>
                             <option value="">Select Team</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="resultSport">Sport</label>
-                        <select id="resultSport" required>
+                        <label for="resultSportSelect">Sport *</label>
+                        <select id="resultSportSelect" required>
                             <option value="">Select Sport</option>
-                            <option value="futsal">Futsal</option>
-                            <option value="cricket">Cricket</option>
-                            <option value="basketball">Basketball</option>
-                            <option value="throwball">Throwball</option>
-                            <option value="volleyball">Volleyball</option>
-                            <option value="dodgeball">Dodgeball</option>
-                            <option value="badminton">Badminton</option>
-                            <option value="chess">Chess</option>
-                            <option value="ludo">Ludo</option>
-                            <option value="carrom">Carrom</option>
-                            <option value="scavenger-hunt">Scavenger Hunt</option>
-                            <option value="gaming">Gaming</option>
-                            <option value="table-tennis">Table Tennis</option>
-                            <option value="athletics">Athletics</option>
-                            <option value="strongmen">Strongmen</option>
-                            <option value="tug-of-war">Tug of War</option>
+                            <option value="Football">Football</option>
+                            <option value="Cricket">Cricket</option>
+                            <option value="Basketball">Basketball</option>
+                            <option value="Volleyball">Volleyball</option>
+                            <option value="Badminton">Badminton</option>
+                            <option value="Table Tennis">Table Tennis</option>
+                            <option value="Tug of War">Tug of War</option>
+                            <option value="Athletics">Athletics</option>
+                            <option value="Swimming">Swimming</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="resultScore">Score</label>
-                        <input type="text" id="resultScore" placeholder="e.g., 3-1, 150 points">
+                        <label for="resultPosition">Position *</label>
+                        <select id="resultPosition" required>
+                            <option value="">Select Position</option>
+                            <option value="1st">1st Place</option>
+                            <option value="2nd">2nd Place</option>
+                            <option value="3rd">3rd Place</option>
+                            <option value="4th">4th Place</option>
+                            <option value="5th">5th Place</option>
+                            <option value="Participated">Participated</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="resultPosition">Position</label>
-                        <input type="number" id="resultPosition" placeholder="1, 2, 3..." min="1">
-                    </div>
-                    <div class="form-group">
-                        <label for="resultDate">Date</label>
-                        <input type="datetime-local" id="resultDate" required>
+                        <label for="resultPoints">Points (Optional)</label>
+                        <input type="number" id="resultPoints" placeholder="e.g., 10, 8, 6..." min="0">
                     </div>
                 </form>
             </div>
