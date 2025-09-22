@@ -3,6 +3,36 @@
 let memberCount = 0;
 let maxMembers = 9; // Default limit
 
+// Show notification function
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
 // Category-based member limits
 const categoryLimits = {
     'university': 15,
@@ -697,6 +727,98 @@ style.textContent = `
         
         .member-form {
             grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        max-width: 400px;
+        min-width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideInRight 0.3s ease-out;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        position: relative;
+    }
+    
+    .notification-success {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+    }
+    
+    .notification-error {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+    
+    .notification-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: white;
+    }
+    
+    .notification-info {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+    
+    .notification-content i {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .notification-content span {
+        flex: 1;
+        font-weight: 500;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .notification-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .notification {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+            min-width: auto;
         }
     }
 `;
