@@ -568,8 +568,8 @@ function formatDate(timestamp) {
 }
 
 // Add CSS for dashboard components
-const style = document.createElement('style');
-style.textContent = `
+const dashboardStyle = document.createElement('style');
+dashboardStyle.textContent = `
     .dashboard-container {
         min-height: 100vh;
         background: #f8f9fa;
@@ -1117,7 +1117,7 @@ style.textContent = `
         color: #2c3e50 !important;
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(dashboardStyle);
 
 // Make functions globally accessible
 window.editTeamInfo = editTeamInfo;
@@ -1126,3 +1126,16 @@ window.editTeamMembers = editTeamMembers;
 window.saveTeamInfo = saveTeamInfo;
 window.saveSportsParticipation = saveSportsParticipation;
 window.closeModal = closeModal;
+
+// Ensure functions are available when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Re-expose functions to ensure they're available
+    window.editTeamInfo = editTeamInfo;
+    window.editSportsParticipation = editSportsParticipation;
+    window.editTeamMembers = editTeamMembers;
+    window.saveTeamInfo = saveTeamInfo;
+    window.saveSportsParticipation = saveSportsParticipation;
+    window.closeModal = closeModal;
+    
+    console.log('Team dashboard functions loaded and available globally');
+});

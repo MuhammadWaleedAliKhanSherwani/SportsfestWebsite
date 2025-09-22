@@ -494,8 +494,8 @@ function formatCNIC(cnic) {
 }
 
 // Add CSS for member fields and form sections
-const style = document.createElement('style');
-style.textContent = `
+const registerStyle = document.createElement('style');
+registerStyle.textContent = `
     .form-section {
         margin-bottom: 2rem;
         padding: 1.5rem;
@@ -822,4 +822,4 @@ style.textContent = `
         }
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(registerStyle);

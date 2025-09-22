@@ -237,8 +237,8 @@ function showNotification(message, type = 'info') {
 }
 
 // Add CSS animation for notifications
-const style = document.createElement('style');
-style.textContent = `
+const portalStyle = document.createElement('style');
+portalStyle.textContent = `
     @keyframes slideInRight {
         from {
             transform: translateX(100%);
@@ -270,7 +270,7 @@ style.textContent = `
         background: rgba(255,255,255,0.2);
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(portalStyle);
 
 // Export functions for use in other files
 window.showNotification = showNotification;
