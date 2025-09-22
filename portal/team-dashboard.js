@@ -65,13 +65,18 @@ async function initializeDashboard() {
 // Load team data
 async function loadTeamData() {
     try {
+        console.log('Loading team data for teamId:', teamId);
         const teamDoc = await db.collection('teams').doc(teamId).get();
+        console.log('Team document exists:', teamDoc.exists);
+        
         if (teamDoc.exists) {
             teamData = teamDoc.data();
+            console.log('Team data loaded:', teamData);
             displayTeamInfo();
             displaySportsParticipation();
             displayTeamMembers();
         } else {
+            console.log('Team document not found');
             showNotification('Team data not found. Please contact support.', 'error');
         }
     } catch (error) {
@@ -82,7 +87,11 @@ async function loadTeamData() {
 
 // Display team information
 function displayTeamInfo() {
-    if (!teamData) return;
+    console.log('displayTeamInfo called with teamData:', teamData);
+    if (!teamData) {
+        console.log('No team data available for display');
+        return;
+    }
 
     document.getElementById('teamName').textContent = teamData.teamName || 'Team Dashboard';
     document.getElementById('teamNameInfo').textContent = teamData.teamName || '-';
@@ -96,19 +105,32 @@ function displayTeamInfo() {
     const status = teamData.status || 'pending';
     statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
     statusElement.className = `status-badge ${status}`;
+    
+    console.log('Team info displayed successfully');
 }
 
 // Display sports participation
 function displaySportsParticipation() {
-    if (!teamData || !teamData.sports) return;
+    console.log('displaySportsParticipation called with teamData:', teamData);
+    if (!teamData || !teamData.sports) {
+        console.log('No team data or sports data available');
+        return;
+    }
 
     const sportsList = document.getElementById('sportsList');
+    if (!sportsList) {
+        console.error('sportsList element not found');
+        return;
+    }
+    
     sportsList.innerHTML = '';
 
     if (teamData.sports.length === 0) {
         sportsList.innerHTML = '<p class="no-data">No sports selected. <a href="#" onclick="editSportsParticipation()">Add sports</a></p>';
         return;
     }
+    
+    console.log('Displaying sports:', teamData.sports);
 
     const sportsGrid = document.createElement('div');
     sportsGrid.className = 'sports-grid';
@@ -1096,3 +1118,11 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Make functions globally accessible
+window.editTeamInfo = editTeamInfo;
+window.editSportsParticipation = editSportsParticipation;
+window.editTeamMembers = editTeamMembers;
+window.saveTeamInfo = saveTeamInfo;
+window.saveSportsParticipation = saveSportsParticipation;
+window.closeModal = closeModal;
