@@ -110,6 +110,12 @@ async function handleRegistration() {
         );
         const user = userCredential.user;
 
+        // Create user document FIRST (this is required for Firestore rules)
+        await createUserDocument(user, 'team', {
+            teamName: formData.teamName,
+            teamId: user.uid
+        });
+
         // Create team document
         const teamData = {
             teamName: formData.teamName,
@@ -131,12 +137,6 @@ async function handleRegistration() {
 
         // Save team data to Firestore
         await db.collection('teams').add(teamData);
-
-        // Create user document
-        await createUserDocument(user, 'team', {
-            teamName: formData.teamName,
-            teamId: user.uid
-        });
 
         // Create sports participation records
         for (const sport of formData.sports) {

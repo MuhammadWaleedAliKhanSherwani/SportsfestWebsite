@@ -34,6 +34,14 @@
 - **City:** Islamabad
 - **Sports:** Table Tennis, Athletics, Gaming
 
+#### Team 4 - Waleed's Team
+- **Email:** `waleedsherwani787@gmail.com`
+- **Password:** `Test@2024!`
+- **Team Name:** Waleed's Team
+- **Institution:** Test University
+- **City:** Karachi
+- **Sports:** Futsal, Cricket, Basketball
+
 ---
 
 ## 🚀 How to Set Up Test Accounts
@@ -46,6 +54,11 @@
 4. **Copy and paste** the contents of `create-test-accounts.js`
 5. **Press Enter** to run the script
 6. **Wait for completion** - you'll see success messages
+
+**This script will create:**
+- ✅ Admin account: `admin@sportsfest.com`
+- ✅ Team accounts: `team1@sportsfest.com`, `team2@sportsfest.com`, `team3@sportsfest.com`
+- ✅ Your personal account: `waleedsherwani787@gmail.com`
 
 ### Method 2: Manual Creation
 

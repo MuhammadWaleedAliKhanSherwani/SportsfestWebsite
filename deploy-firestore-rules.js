@@ -1,4 +1,12 @@
-rules_version = '2';
+// Deploy Firestore Rules Script
+// Run this in your browser console to deploy the updated Firestore rules
+
+console.log('🚀 Deploying Firestore rules...');
+
+// Note: This script will show you the rules that need to be deployed
+// You'll need to copy these rules to your Firebase Console
+
+const firestoreRules = `rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -56,4 +64,22 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
   }
-}
+}`;
+
+console.log('📋 Updated Firestore Rules:');
+console.log('========================');
+console.log(firestoreRules);
+console.log('========================');
+
+console.log('\n📝 To deploy these rules:');
+console.log('1. Go to Firebase Console: https://console.firebase.google.com');
+console.log('2. Select your project: sportsfest-website');
+console.log('3. Go to Firestore Database → Rules');
+console.log('4. Replace the existing rules with the rules above');
+console.log('5. Click "Publish"');
+
+console.log('\n🔧 Alternative: Use Firebase CLI');
+console.log('If you have Firebase CLI installed, run:');
+console.log('firebase deploy --only firestore:rules');
+
+console.log('\n✅ After deploying the rules, team registration should work!');
