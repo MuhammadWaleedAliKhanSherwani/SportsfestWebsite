@@ -312,16 +312,43 @@ async function loadResults() {
 
 // Edit team information
 function editTeamInfo() {
-    if (!teamData) return;
+    console.log('editTeamInfo called');
+    if (!teamData) {
+        console.log('No team data available');
+        showNotification('No team data available. Please refresh the page.', 'error');
+        return;
+    }
+
+    console.log('Team data:', teamData);
 
     // Populate form with current data
-    document.getElementById('editTeamName').value = teamData.teamName || '';
-    document.getElementById('editInstitution').value = teamData.institution || '';
-    document.getElementById('editCity').value = teamData.city || '';
-    document.getElementById('editCategory').value = teamData.teamCategory || '';
+    const teamNameField = document.getElementById('editTeamName');
+    const institutionField = document.getElementById('editInstitution');
+    const cityField = document.getElementById('editCity');
+    const categoryField = document.getElementById('editCategory');
+
+    if (teamNameField) teamNameField.value = teamData.teamName || '';
+    if (institutionField) institutionField.value = teamData.institution || '';
+    if (cityField) cityField.value = teamData.city || '';
+    if (categoryField) categoryField.value = teamData.teamCategory || '';
 
     // Show modal
-    document.getElementById('editTeamModal').style.display = 'flex';
+    const modal = document.getElementById('editTeamModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        console.log('Modal should be visible now');
+        
+        // Add click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal('editTeamModal');
+            }
+        });
+    } else {
+        console.error('editTeamModal not found');
+        showNotification('Edit modal not found. Please refresh the page.', 'error');
+    }
 }
 
 // Save team information
@@ -354,9 +381,20 @@ async function saveTeamInfo() {
 
 // Edit sports participation
 function editSportsParticipation() {
-    if (!teamData) return;
+    console.log('editSportsParticipation called');
+    if (!teamData) {
+        console.log('No team data available');
+        showNotification('No team data available. Please refresh the page.', 'error');
+        return;
+    }
 
     const editSportsGrid = document.getElementById('editSportsGrid');
+    if (!editSportsGrid) {
+        console.error('editSportsGrid not found');
+        showNotification('Sports edit grid not found. Please refresh the page.', 'error');
+        return;
+    }
+
     editSportsGrid.innerHTML = '';
 
     const sports = [
@@ -377,7 +415,22 @@ function editSportsParticipation() {
         editSportsGrid.appendChild(sportOption);
     });
 
-    document.getElementById('editSportsModal').style.display = 'flex';
+    const modal = document.getElementById('editSportsModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        console.log('Sports modal should be visible now');
+        
+        // Add click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal('editSportsModal');
+            }
+        });
+    } else {
+        console.error('editSportsModal not found');
+        showNotification('Sports edit modal not found. Please refresh the page.', 'error');
+    }
 }
 
 // Save sports participation
@@ -446,7 +499,15 @@ function editTeamMembers() {
 
 // Close modal
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+    console.log('closeModal called for:', modalId);
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        console.log('Modal closed');
+    } else {
+        console.error('Modal not found:', modalId);
+    }
 }
 
 // Utility functions
@@ -777,9 +838,13 @@ style.textContent = `
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
+        z-index: 10000;
         align-items: center;
         justify-content: center;
+    }
+    
+    .modal.show {
+        display: flex !important;
     }
     
     .modal-content {
