@@ -188,11 +188,12 @@ function displayTeamMembers() {
                 <div class="member-info">
                     <div class="member-name">${member.name}</div>
                     <div class="member-details">
-                        <div class="member-phone">${member.phone}</div>
-                        <div class="member-cnic">${member.cnic}</div>
+                        <div class="member-email">${member.email || 'No email'}</div>
+                        <div class="member-phone">${member.phone || 'No phone'}</div>
+                        <div class="member-position">${member.position || 'Player'}</div>
                     </div>
                 </div>
-                <div class="member-role">Member ${index + 1}</div>
+                <div class="member-role">${member.position || 'Player'}</div>
             `;
             membersList.appendChild(memberCard);
         });
@@ -517,7 +518,38 @@ async function saveSportsParticipation() {
 
 // Edit team members
 function editTeamMembers() {
-    showNotification('Team member editing feature coming soon!', 'info');
+    console.log('editTeamMembers called');
+    
+    if (!teamData) {
+        showNotification('No team data available', 'error');
+        return;
+    }
+    
+    const modal = document.getElementById('editMembersModal');
+    if (modal) {
+        // Populate current members
+        const membersList = document.getElementById('editMembersList');
+        if (membersList) {
+            membersList.innerHTML = '';
+            
+            // Add existing members
+            if (teamData.members && teamData.members.length > 0) {
+                teamData.members.forEach((member, index) => {
+                    addMemberEditField(member, index);
+                });
+            } else {
+                // Add one empty field if no members
+                addMemberEditField({}, 0);
+            }
+        }
+        
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        console.log('Members modal should be visible now');
+    } else {
+        console.error('Edit members modal not found');
+        showNotification('Edit members modal not found', 'error');
+    }
 }
 
 // Close modal
@@ -1187,6 +1219,121 @@ dashboardStyle.textContent = `
         margin-top: 1rem;
         color: #2c3e50;
     }
+    
+    /* Team members editing styles */
+    .members-edit-container {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .members-edit-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .members-edit-header p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .members-edit-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .member-edit-field {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        position: relative;
+    }
+    
+    .member-field-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .member-field-header h4 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+    
+    .remove-member-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    
+    .remove-member-btn:hover {
+        background: #c0392b;
+    }
+    
+    .member-field-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .member-field-content .form-group {
+        margin-bottom: 0;
+    }
+    
+    .member-field-content .form-group:last-child {
+        grid-column: 1 / -1;
+    }
+    
+    .member-field-content label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    
+    .member-field-content input,
+    .member-field-content select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .member-field-content input:focus,
+    .member-field-content select:focus {
+        outline: none;
+        border-color: #3498db;
+    }
+    
+    @media (max-width: 768px) {
+        .member-field-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .members-edit-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
 `;
 document.head.appendChild(dashboardStyle);
 
@@ -1282,5 +1429,137 @@ async function createBasicTeamData() {
     }
 }
 
-// Make the new function globally accessible
+// Add member edit field
+function addMemberEditField(member = {}, index = 0) {
+    const membersList = document.getElementById('editMembersList');
+    if (!membersList) return;
+    
+    const memberField = document.createElement('div');
+    memberField.className = 'member-edit-field';
+    memberField.innerHTML = `
+        <div class="member-field-header">
+            <h4>Member ${index + 1}</h4>
+            <button type="button" class="remove-member-btn" onclick="removeMemberField(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="member-field-content">
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" name="memberName" value="${member.name || ''}" placeholder="Enter member name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="memberEmail" value="${member.email || ''}" placeholder="member@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="memberPhone" value="${member.phone || ''}" placeholder="0300-1234567">
+            </div>
+            <div class="form-group">
+                <label>Position</label>
+                <select name="memberPosition">
+                    <option value="player" ${member.position === 'player' ? 'selected' : ''}>Player</option>
+                    <option value="substitute" ${member.position === 'substitute' ? 'selected' : ''}>Substitute</option>
+                    <option value="reserve" ${member.position === 'reserve' ? 'selected' : ''}>Reserve</option>
+                </select>
+            </div>
+        </div>
+    `;
+    
+    membersList.appendChild(memberField);
+}
+
+// Remove member field
+function removeMemberField(button) {
+    const memberField = button.closest('.member-edit-field');
+    if (memberField) {
+        memberField.remove();
+    }
+}
+
+// Add new member field
+function addNewMemberField() {
+    const membersList = document.getElementById('editMembersList');
+    if (!membersList) return;
+    
+    const currentFields = membersList.querySelectorAll('.member-edit-field');
+    const maxMembers = getMaxMembersForCategory(teamData.teamCategory);
+    
+    if (currentFields.length >= maxMembers) {
+        showNotification(`Maximum ${maxMembers} members allowed for this category`, 'error');
+        return;
+    }
+    
+    addMemberEditField({}, currentFields.length);
+}
+
+// Get max members for category
+function getMaxMembersForCategory(category) {
+    const limits = {
+        'university': 15,
+        'college': 12,
+        'school': 10,
+        'club': 20,
+        'corporate': 15,
+        'community': 12
+    };
+    return limits[category] || 10;
+}
+
+// Save team members
+async function saveTeamMembers() {
+    try {
+        const membersList = document.getElementById('editMembersList');
+        if (!membersList) {
+            showNotification('Members list not found', 'error');
+            return;
+        }
+        
+        const memberFields = membersList.querySelectorAll('.member-edit-field');
+        const members = [];
+        
+        memberFields.forEach((field, index) => {
+            const name = field.querySelector('input[name="memberName"]').value.trim();
+            const email = field.querySelector('input[name="memberEmail"]').value.trim();
+            const phone = field.querySelector('input[name="memberPhone"]').value.trim();
+            const position = field.querySelector('select[name="memberPosition"]').value;
+            
+            if (name) {
+                members.push({
+                    name: name,
+                    email: email || '',
+                    phone: phone || '',
+                    position: position,
+                    id: `member_${Date.now()}_${index}`
+                });
+            }
+        });
+        
+        // Update team document
+        await db.collection('teams').doc(teamId).update({
+            members: members,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update local data
+        teamData.members = members;
+        
+        // Refresh display
+        displayTeamMembers();
+        await loadDashboardStats();
+        
+        showNotification('Team members updated successfully!', 'success');
+        closeModal('editMembersModal');
+        
+    } catch (error) {
+        console.error('Error updating team members:', error);
+        showNotification('Error updating team members.', 'error');
+    }
+}
+
+// Make the new functions globally accessible
 window.createBasicTeamData = createBasicTeamData;
+window.addNewMemberField = addNewMemberField;
+window.removeMemberField = removeMemberField;
+window.saveTeamMembers = saveTeamMembers;

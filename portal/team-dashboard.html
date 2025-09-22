@@ -230,6 +230,35 @@
         </div>
     </div>
 
+    <!-- Edit Team Members Modal -->
+    <div id="editMembersModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Team Members</h3>
+                <button class="close-btn" onclick="closeModal('editMembersModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="members-edit-container">
+                    <div class="members-edit-header">
+                        <p>Manage your team members. You can add, edit, or remove members.</p>
+                        <button type="button" class="btn btn-primary" onclick="addNewMemberField()">
+                            <i class="fas fa-plus"></i> Add Member
+                        </button>
+                    </div>
+                    <div id="editMembersList" class="members-edit-list">
+                        <!-- Member fields will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('editMembersModal')">Cancel</button>
+                <button class="btn primary" onclick="saveTeamMembers()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>
     <script src="auth.js"></script>
