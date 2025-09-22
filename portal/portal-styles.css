@@ -475,6 +475,86 @@
     margin: 0;
 }
 
+/* Text Visibility Fixes */
+.form-group label {
+    color: #2c3e50 !important;
+    font-weight: 600;
+}
+
+.form-section h3 {
+    color: #2c3e50 !important;
+}
+
+.form-help {
+    color: #7f8c8d !important;
+}
+
+.sport-name {
+    color: #2c3e50 !important;
+}
+
+.member-name {
+    color: #2c3e50 !important;
+}
+
+.member-details {
+    color: #7f8c8d !important;
+}
+
+.info-item label {
+    color: #7f8c8d !important;
+}
+
+.info-item span {
+    color: #2c3e50 !important;
+}
+
+/* Ensure all text in portal is visible */
+.portal-card h2,
+.portal-card p,
+.portal-features .feature span {
+    color: #2c3e50 !important;
+}
+
+.auth-header h1,
+.auth-header p {
+    color: #2c3e50 !important;
+}
+
+.dashboard-title,
+.dashboard-subtitle {
+    color: #2c3e50 !important;
+}
+
+/* Override any white text */
+* {
+    color: inherit;
+}
+
+body {
+    color: #2c3e50;
+}
+
+/* Force visibility for all portal elements */
+.portal-card *,
+.auth-card *,
+.dashboard-container *,
+.form-section *,
+.info-grid *,
+.sports-grid *,
+.members-list * {
+    color: #2c3e50 !important;
+}
+
+/* Specific overrides for labels and text */
+label,
+span,
+p,
+div,
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .portal-hero-title {

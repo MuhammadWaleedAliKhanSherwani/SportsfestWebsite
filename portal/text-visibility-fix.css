@@ -1,0 +1,147 @@
+/* Global Text Visibility Fix for Sports Fest Portal */
+
+/* Force all text to be visible */
+* {
+    color: #2c3e50 !important;
+}
+
+/* Override any inherited white text */
+body,
+html,
+.portal-card,
+.auth-card,
+.dashboard-container,
+.form-section,
+.info-grid,
+.sports-grid,
+.members-list,
+.events-list,
+.results-list {
+    color: #2c3e50 !important;
+}
+
+/* Specific element overrides */
+label,
+span,
+p,
+div,
+h1, h2, h3, h4, h5, h6,
+.form-group label,
+.form-section h3,
+.sport-name,
+.member-name,
+.info-item label,
+.info-item span,
+.portal-card h2,
+.portal-card p,
+.auth-header h1,
+.auth-header p,
+.dashboard-title,
+.dashboard-subtitle {
+    color: #2c3e50 !important;
+}
+
+/* Ensure form elements are visible */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select,
+textarea {
+    color: #2c3e50 !important;
+    background: white !important;
+}
+
+/* Override any white text on white background */
+.portal-card *,
+.auth-card *,
+.dashboard-container *,
+.form-section *,
+.info-grid *,
+.sports-grid *,
+.members-list *,
+.events-list *,
+.results-list * {
+    color: #2c3e50 !important;
+}
+
+/* Force visibility for all text elements */
+.portal-card,
+.auth-card,
+.dashboard-container,
+.form-section,
+.info-grid,
+.sports-grid,
+.members-list,
+.events-list,
+.results-list {
+    color: #2c3e50 !important;
+}
+
+.portal-card *,
+.auth-card *,
+.dashboard-container *,
+.form-section *,
+.info-grid *,
+.sports-grid *,
+.members-list *,
+.events-list *,
+.results-list * {
+    color: #2c3e50 !important;
+}
+
+/* Specific overrides for common elements */
+.team-name,
+.institution,
+.city,
+.category,
+.captain,
+.status,
+.sport-name,
+.member-name,
+.event-name,
+.result-name {
+    color: #2c3e50 !important;
+}
+
+/* Ensure all labels are visible */
+label[for="teamName"],
+label[for="institution"],
+label[for="city"],
+label[for="teamCategory"],
+label[for="captainName"],
+label[for="captainEmail"],
+label[for="captainPhone"],
+label[for="captainCNIC"],
+label[for="password"],
+label[for="confirmPassword"] {
+    color: #2c3e50 !important;
+    font-weight: 600;
+}
+
+/* Override any inherited styles */
+.form-group label,
+.form-section h3,
+.sport-option,
+.member-field,
+.info-item {
+    color: #2c3e50 !important;
+}
+
+/* Force visibility for all text content */
+.portal-card h2,
+.portal-card p,
+.portal-features .feature span,
+.auth-header h1,
+.auth-header p,
+.dashboard-title,
+.dashboard-subtitle,
+.section-header h2,
+.info-item label,
+.info-item span,
+.sport-name,
+.member-name,
+.event-header h4,
+.result-header h4 {
+    color: #2c3e50 !important;
+}
