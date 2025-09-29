@@ -1,8 +1,17 @@
 /* Global Text Visibility Fix for Sports Fest Portal */
 
+/* Color Variables */
+:root {
+    --midnight-navy: #1B2452;
+    --royal-gold: #D4AF37;
+    --metallic-bronze: #B08D57;
+    --slate-grey: #2E2E3A;
+    --pure-white: #FFFFFF;
+}
+
 /* Force all text to be visible */
 * {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Override any inherited white text */
@@ -17,7 +26,7 @@ html,
 .members-list,
 .events-list,
 .results-list {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Specific element overrides */
@@ -38,7 +47,7 @@ h1, h2, h3, h4, h5, h6,
 .auth-header p,
 .dashboard-title,
 .dashboard-subtitle {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Ensure form elements are visible */
@@ -48,8 +57,8 @@ input[type="password"],
 input[type="tel"],
 select,
 textarea {
-    color: #2c3e50 !important;
-    background: white !important;
+    color: var(--slate-grey) !important;
+    background: var(--pure-white) !important;
 }
 
 /* Override any white text on white background */
@@ -62,7 +71,7 @@ textarea {
 .members-list *,
 .events-list *,
 .results-list * {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Force visibility for all text elements */
@@ -75,7 +84,7 @@ textarea {
 .members-list,
 .events-list,
 .results-list {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 .portal-card *,
@@ -87,7 +96,7 @@ textarea {
 .members-list *,
 .events-list *,
 .results-list * {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Specific overrides for common elements */
@@ -101,7 +110,7 @@ textarea {
 .member-name,
 .event-name,
 .result-name {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Ensure all labels are visible */
@@ -115,7 +124,7 @@ label[for="captainPhone"],
 label[for="captainCNIC"],
 label[for="password"],
 label[for="confirmPassword"] {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
     font-weight: 600;
 }
 
@@ -125,7 +134,7 @@ label[for="confirmPassword"] {
 .sport-option,
 .member-field,
 .info-item {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }
 
 /* Force visibility for all text content */
@@ -143,5 +152,5 @@ label[for="confirmPassword"] {
 .member-name,
 .event-header h4,
 .result-header h4 {
-    color: #2c3e50 !important;
+    color: var(--slate-grey) !important;
 }

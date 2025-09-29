@@ -20,10 +20,11 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#tournament">Tournament</a></li>
-                <li><a href="#payments">Payments</a></li>
-                <li><a href="#schedule">Schedule</a></li>
+                <li><a href="#payments">Fee Structure</a></li>
+                <li><a href="#schedule">Code of Conduct</a></li>
+                <li><a href="#faq">FAQ</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="portal/index.html" class="portal-link">Portal</a></li>
+                <li><a href="portal/index.html" class="portal-link">Register</a></li>
             </ul>
             <div class="nav-toggle">
                 <span class="bar"></span>
@@ -242,26 +243,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="tournament-rules">
-                    <h3>Tournament Format</h3>
-                    <ul class="rules-list">
-                        <li><i class="fas fa-check"></i> 90+ teams from across Pakistan divided into groups of 4</li>
-                        <li><i class="fas fa-check"></i> Round-robin group stage matches</li>
-                        <li><i class="fas fa-check"></i> Top 2 teams from each group advance</li>
-                        <li><i class="fas fa-check"></i> Single elimination knockout rounds</li>
-                        <li><i class="fas fa-check"></i> 20-minute halves for all matches</li>
-                        <li><i class="fas fa-check"></i> FIFA futsal rules strictly enforced by Pakistani referees</li>
-                    </ul>
+                <div class="tournament-location">
+                    <h3>Tournament Location</h3>
+                    <div class="location-map">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3398.5!2d74.3587!3d31.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39190483e58107d9%3A0xc23abe6ccc7e2462!2sLahore%20Sports%20Complex!5e0!3m2!1sen!2spk!4v1234567890"
+                            width="100%" 
+                            height="300" 
+                            style="border:0; border-radius: 15px;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="location-details">
+                        <p><strong>Lahore Sports Complex</strong></p>
+                        <p>Gaddafi Stadium, Lahore, Pakistan</p>
+                        <p><i class="fas fa-phone"></i> +92 300 1234567</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Payment Instructions Section -->
+    <!-- Fee Structure Section -->
     <section id="payments" class="payments">
         <div class="container">
             <div class="section-header">
-                <h2>Payment Instructions</h2>
+                <h2>Fee Structure</h2>
                 <p>Complete your registration by making payment through any of the following methods</p>
             </div>
             <div class="payment-methods">
@@ -343,6 +352,62 @@
         </div>
     </section>
 
+    <!-- Code of Conduct Section -->
+    <section id="schedule" class="code-of-conduct">
+        <div class="container">
+            <div class="section-header">
+                <h2>Code of Conduct</h2>
+                <p>Rules and guidelines for all participants</p>
+            </div>
+            <div class="conduct-content">
+                <div class="conduct-grid">
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Sportsmanship</h3>
+                        <p>Respect all players, officials, and spectators. Maintain fair play and positive attitude throughout the tournament.</p>
+                    </div>
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Safety First</h3>
+                        <p>Follow all safety protocols. Use proper equipment and report any injuries immediately to tournament officials.</p>
+                    </div>
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Punctuality</h3>
+                        <p>Arrive 30 minutes before your scheduled matches. Late arrivals may result in match forfeiture.</p>
+                    </div>
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <h3>Prohibited Items</h3>
+                        <p>No alcohol, drugs, or weapons allowed on premises. Violation will result in immediate disqualification.</p>
+                    </div>
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h3>Disciplinary Actions</h3>
+                        <p>Unsportsmanlike conduct may result in warnings, suspensions, or permanent disqualification from the tournament.</p>
+                    </div>
+                    <div class="conduct-card">
+                        <div class="conduct-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3>Communication</h3>
+                        <p>Keep your contact information updated. Tournament officials will communicate important updates via WhatsApp and email.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sports Categories -->
     <section id="sports" class="sports-categories">
         <div class="container">
@@ -357,10 +422,10 @@
                     </div>
                     <h3>Futsal</h3>
                     <p>5-a-side indoor football with fast-paced action</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> 5 players per team</span>
-                        <span><i class="fas fa-clock"></i> 20 min halves</span>
-                    </div>
+                    <a href="sports-details.html#futsal" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
                 </div>
                 <div class="sport-card">
                     <div class="sport-icon">
@@ -368,10 +433,10 @@
                     </div>
                     <h3>Basketball</h3>
                     <p>3x3 street basketball tournament</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> 3 players per team</span>
-                        <span><i class="fas fa-clock"></i> 10 min games</span>
-                    </div>
+                    <a href="sports-details.html#basketball" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
                 </div>
                 <div class="sport-card">
                     <div class="sport-icon">
@@ -379,10 +444,10 @@
                     </div>
                     <h3>Table Tennis</h3>
                     <p>Individual and doubles table tennis</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> 1-2 players</span>
-                        <span><i class="fas fa-clock"></i> Best of 5</span>
-                    </div>
+                    <a href="sports-details.html#table-tennis" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
                 </div>
                 <div class="sport-card">
                     <div class="sport-icon">
@@ -390,10 +455,10 @@
                     </div>
                     <h3>Arm Wrestling</h3>
                     <p>Strength competition with weight categories</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> Individual</span>
-                        <span><i class="fas fa-weight"></i> Weight classes</span>
-                    </div>
+                    <a href="sports-details.html#arm-wrestling" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
                 </div>
                 <div class="sport-card">
                     <div class="sport-icon">
@@ -401,10 +466,10 @@
                     </div>
                     <h3>Athletics</h3>
                     <p>Track and field events including sprints and relays</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> Individual/Teams</span>
-                        <span><i class="fas fa-route"></i> Multiple events</span>
-                    </div>
+                    <a href="sports-details.html#athletics" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
                 </div>
                 <div class="sport-card">
                     <div class="sport-icon">
@@ -412,9 +477,184 @@
                     </div>
                     <h3>Swimming</h3>
                     <p>Freestyle, breaststroke, and relay competitions</p>
-                    <div class="sport-details">
-                        <span><i class="fas fa-users"></i> Individual</span>
-                        <span><i class="fas fa-water"></i> Multiple strokes</span>
+                    <a href="sports-details.html#swimming" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-table-tennis"></i>
+                    </div>
+                    <h3>Badminton</h3>
+                    <p>Fast-paced racket sport with singles and doubles</p>
+                    <a href="sports-details.html#badminton" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-volleyball-ball"></i>
+                    </div>
+                    <h3>Volleyball</h3>
+                    <p>Team sport with 6 players per side</p>
+                    <a href="sports-details.html#volleyball" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-baseball-ball"></i>
+                    </div>
+                    <h3>Cricket</h3>
+                    <p>T20 format with 11 players per team</p>
+                    <a href="sports-details.html#cricket" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h3>Football</h3>
+                    <p>11-a-side outdoor football</p>
+                    <a href="sports-details.html#football" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-table-tennis"></i>
+                    </div>
+                    <h3>Tennis</h3>
+                    <p>Individual and doubles tennis</p>
+                    <a href="sports-details.html#tennis" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-table-tennis"></i>
+                    </div>
+                    <h3>Squash</h3>
+                    <p>Individual racket sport in enclosed court</p>
+                    <a href="sports-details.html#squash" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-hockey-puck"></i>
+                    </div>
+                    <h3>Hockey</h3>
+                    <p>Field hockey with 11 players per team</p>
+                    <a href="sports-details.html#hockey" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3>Wrestling</h3>
+                    <p>Individual combat sport with weight categories</p>
+                    <a href="sports-details.html#wrestling" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-fist-raised"></i>
+                    </div>
+                    <h3>Boxing</h3>
+                    <p>Individual combat sport with weight categories</p>
+                    <a href="sports-details.html#boxing" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-fist-raised"></i>
+                    </div>
+                    <h3>Karate</h3>
+                    <p>Martial art with kata and kumite events</p>
+                    <a href="sports-details.html#karate" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">
+                        <i class="fas fa-fist-raised"></i>
+                    </div>
+                    <h3>Taekwondo</h3>
+                    <p>Korean martial art with kicking techniques</p>
+                    <a href="sports-details.html#taekwondo" class="sport-btn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tournament Images Section -->
+    <section class="tournament-images">
+        <div class="container">
+            <div class="section-header">
+                <h2>Tournament Gallery</h2>
+                <p>Experience the excitement through our tournament highlights</p>
+            </div>
+            <div class="images-grid">
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-camera"></i>
+                        <h3>Action Shots</h3>
+                        <p>High-energy moments from previous tournaments</p>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Championship Moments</h3>
+                        <p>Victory celebrations and award ceremonies</p>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-users"></i>
+                        <h3>Team Spirit</h3>
+                        <p>Teams bonding and supporting each other</p>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-star"></i>
+                        <h3>Memorable Moments</h3>
+                        <p>Special highlights and unforgettable plays</p>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-medal"></i>
+                        <h3>Award Ceremonies</h3>
+                        <p>Recognition of outstanding performances</p>
+                    </div>
+                </div>
+                <div class="image-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-heart"></i>
+                        <h3>Community Spirit</h3>
+                        <p>Fans and supporters cheering for their teams</p>
                     </div>
                 </div>
             </div>
@@ -473,6 +713,92 @@
                 <div class="urgency-text">
                     <i class="fas fa-clock"></i>
                     Early bird pricing ends February 28th, 2024
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about the tournament</p>
+            </div>
+            <div class="faq-content">
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What is the registration fee?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The registration fee is PKR 5,000 per team. Early bird pricing is PKR 4,000 if you register before February 28th, 2024.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How many players can be in a team?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Team size varies by sport: Futsal (5 players), Basketball (3 players), Table Tennis (1-2 players), Athletics (individual or team), Swimming (individual), Arm Wrestling (individual).</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What equipment do I need to bring?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Basic equipment will be provided. Teams should bring their own sports shoes, appropriate clothing, and any personal protective equipment. Specific requirements will be communicated before the tournament.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Can I participate in multiple sports?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! You can register for multiple sports categories. Each sport has its own registration and fee structure. Check the sports categories section for details.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What happens if it rains?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Most events are indoor, so weather won't affect the tournament. In case of any outdoor events, we have covered facilities and backup plans.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I get my team registered?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Click the "Register" button in the navigation, create your team account, fill in all required information, make the payment, and submit your registration. You'll receive confirmation within 24 hours.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What are the age restrictions?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Participants must be 16 years or older. There are no upper age limits. All participants must provide valid ID proof during registration.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Is accommodation provided?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Accommodation is not provided by the tournament organizers. Teams are responsible for their own accommodation arrangements. We can provide recommendations for nearby hotels.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -560,25 +886,9 @@
             <div class="social-links">
                 <h3>Follow Us</h3>
                 <div class="social-grid">
-                    <a href="#" class="social-link">
-                        <i class="fab fa-facebook"></i>
-                        <span>Facebook</span>
-                    </a>
-                    <a href="#" class="social-link">
+                    <a href="https://www.instagram.com/boltsportsfest/" target="_blank" class="social-link">
                         <i class="fab fa-instagram"></i>
                         <span>Instagram</span>
-                    </a>
-                    <a href="#" class="social-link">
-                        <i class="fab fa-twitter"></i>
-                        <span>Twitter</span>
-                    </a>
-                    <a href="#" class="social-link">
-                        <i class="fab fa-youtube"></i>
-                        <span>YouTube</span>
-                    </a>
-                    <a href="#" class="social-link">
-                        <i class="fab fa-tiktok"></i>
-                        <span>TikTok</span>
                     </a>
                 </div>
             </div>
@@ -600,10 +910,7 @@
                     <a href="#">Privacy Policy</a>
                 </div>
                 <div class="footer-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/boltsportsfest/" target="_blank"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="footer-bottom">
