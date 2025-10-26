@@ -1,6 +1,6 @@
-# Sports Fest Portal - PFPL 2024
+# Sports Fest Portal - Bolt Sportsfest
 
-A comprehensive Sports Fest portal integrated with Firebase for the Pakistan Futsal Premier League 2024. This portal provides team registration, management, and real-time tournament tracking capabilities.
+A comprehensive Sports Fest portal integrated with Firebase for the Bolt Sportsfest. This portal provides team registration, management, and real-time tournament tracking capabilities.
 
 ## 🏆 Features
 
@@ -341,7 +341,7 @@ For technical support or questions:
 
 ## 📄 License
 
-This project is proprietary software for Pakistan Futsal Premier League 2024.
+This project is proprietary software for Bolt Sportsfest.
 
 ## 🔄 Updates
 
@@ -363,4 +363,4 @@ This project is proprietary software for Pakistan Futsal Premier League 2024.
 
 ---
 
-**Developed for Pakistan Futsal Premier League 2024** 🏆 
+**Developed for Bolt Sportsfest** 🏆 
