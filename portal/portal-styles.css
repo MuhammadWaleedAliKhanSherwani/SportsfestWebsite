@@ -621,3 +621,217 @@ h1, h2, h3, h4, h5, h6 {
         padding: 1rem;
     }
 }
+
+/* Delegation Options Styles */
+.delegation-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.delegation-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    position: relative;
+}
+
+.delegation-option:hover {
+    border-color: var(--royal-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+}
+
+.delegation-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.delegation-option input[type="radio"]:checked + .delegation-icon + .delegation-name + .delegation-desc {
+    /* This will be handled by the checked state */
+}
+
+.delegation-option input[type="radio"]:checked ~ * {
+    color: var(--midnight-navy);
+}
+
+.delegation-option:has(input[type="radio"]:checked) {
+    border-color: var(--royal-gold);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(244, 208, 63, 0.05));
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+}
+
+.delegation-icon {
+    font-size: 2.5rem;
+    color: var(--royal-gold);
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.delegation-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--midnight-navy);
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.delegation-desc {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+}
+
+/* Checkbox Group Styles */
+.checkbox-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.checkbox-group .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.checkbox-group .checkbox-label:hover {
+    border-color: var(--royal-gold);
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.checkbox-group .checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--royal-gold);
+    border-color: var(--royal-gold);
+}
+
+.checkbox-group .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    display: block;
+}
+
+/* Enhanced Member Form Styles */
+.member-form {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.member-form-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.member-form-title {
+    font-weight: 600;
+    color: var(--midnight-navy);
+    font-size: 1.1rem;
+}
+
+.remove-member-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.remove-member-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.member-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.member-sports-selection {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+}
+
+.member-sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.member-sport-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.member-sport-option:hover {
+    border-color: var(--royal-gold);
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.member-sport-option input[type="checkbox"]:checked + span {
+    color: var(--royal-gold);
+    font-weight: 600;
+}
+
+.member-sport-option:has(input[type="checkbox"]:checked) {
+    border-color: var(--royal-gold);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Responsive Design for Delegation Options */
+@media (max-width: 768px) {
+    .delegation-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkbox-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .member-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .member-sports-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}

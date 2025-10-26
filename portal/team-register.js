@@ -1,7 +1,8 @@
 // Team Registration JavaScript
 
 let memberCount = 0;
-let maxMembers = 9; // Default limit
+let maxMembers = 500; // Maximum members allowed
+let selectedDelegationType = null;
 
 // Show notification function
 function showNotification(message, type = 'info') {
@@ -33,15 +34,6 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Category-based member limits
-const categoryLimits = {
-    'university': 15,
-    'college': 12,
-    'school': 10,
-    'club': 20,
-    'corporate': 15,
-    'community': 12
-};
 
 // Initialize registration form
 document.addEventListener('DOMContentLoaded', function() {
@@ -49,6 +41,39 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPasswordStrength();
     setupFormValidation();
 });
+
+// Toggle delegation fields based on selection
+function toggleDelegationFields() {
+    const delegationType = document.querySelector('input[name="delegationType"]:checked');
+    if (!delegationType) return;
+    
+    selectedDelegationType = delegationType.value;
+    const institutionGroup = document.getElementById('institutionGroup');
+    const sportsTeacherGroup = document.getElementById('sportsTeacherGroup');
+    const sportsTeacherPhoneGroup = document.getElementById('sportsTeacherPhoneGroup');
+    
+    if (selectedDelegationType === 'institution') {
+        // Show institution field and sports teacher fields
+        institutionGroup.style.display = 'block';
+        sportsTeacherGroup.style.display = 'block';
+        sportsTeacherPhoneGroup.style.display = 'block';
+        
+        // Make institution field required
+        document.getElementById('institution').required = true;
+        document.getElementById('sportsTeacherName').required = true;
+        document.getElementById('sportsTeacherPhone').required = true;
+    } else {
+        // Hide institution field and sports teacher fields
+        institutionGroup.style.display = 'none';
+        sportsTeacherGroup.style.display = 'none';
+        sportsTeacherPhoneGroup.style.display = 'none';
+        
+        // Make institution field not required
+        document.getElementById('institution').required = false;
+        document.getElementById('sportsTeacherName').required = false;
+        document.getElementById('sportsTeacherPhone').required = false;
+    }
+}
 
 // Initialize registration form functionality
 function initializeRegistrationForm() {
@@ -67,7 +92,7 @@ function initializeRegistrationForm() {
         if (memberCount < maxMembers) {
             addMemberField();
         } else {
-            showNotification(`Maximum ${maxMembers} additional members allowed for this category`, 'error');
+            showNotification(`Maximum ${maxMembers} members allowed`, 'error');
         }
     });
 
@@ -78,14 +103,6 @@ function initializeRegistrationForm() {
             this.value = formatPhoneNumber(this.value);
         });
     });
-
-    // CNIC formatting
-    const cnicInput = document.getElementById('captainCNIC');
-    if (cnicInput) {
-        cnicInput.addEventListener('input', function() {
-            this.value = formatCNIC(this.value);
-        });
-    }
 }
 
 // Handle team registration
@@ -105,7 +122,7 @@ async function handleRegistration() {
 
         // Create user account
         const userCredential = await auth.createUserWithEmailAndPassword(
-            formData.captainEmail, 
+            formData.headDelegateEmail, 
             formData.password
         );
         const user = userCredential.user;
@@ -118,16 +135,20 @@ async function handleRegistration() {
 
         // Create team document
         const teamData = {
+            delegationType: formData.delegationType,
             teamName: formData.teamName,
             institution: formData.institution,
             city: formData.city,
-            teamCategory: formData.teamCategory,
-            captain: {
-                name: formData.captainName,
-                email: formData.captainEmail,
-                phone: formData.captainPhone,
-                cnic: formData.captainCNIC
+            ageCategories: formData.ageCategories,
+            headDelegate: {
+                name: formData.headDelegateName,
+                email: formData.headDelegateEmail,
+                phone: formData.headDelegatePhone
             },
+            sportsTeacher: formData.delegationType === 'institution' ? {
+                name: formData.sportsTeacherName,
+                phone: formData.sportsTeacherPhone
+            } : null,
             members: formData.members,
             sports: formData.sports,
             status: 'pending',
@@ -166,16 +187,24 @@ function getFormData() {
     const form = document.getElementById('registrationForm');
     const formData = new FormData(form);
     
+    // Get delegation type
+    const delegationType = document.querySelector('input[name="delegationType"]:checked');
+    
+    // Get age categories
+    const ageCategories = Array.from(document.querySelectorAll('input[name="ageCategory"]:checked')).map(cb => cb.value);
+    
     // Get basic team information
     const data = {
+        delegationType: delegationType ? delegationType.value : null,
         teamName: formData.get('teamName'),
         institution: formData.get('institution'),
         city: formData.get('city'),
-        teamCategory: formData.get('teamCategory'),
-        captainName: formData.get('captainName'),
-        captainEmail: formData.get('captainEmail'),
-        captainPhone: formData.get('captainPhone'),
-        captainCNIC: formData.get('captainCNIC'),
+        ageCategories: ageCategories,
+        headDelegateName: formData.get('headDelegateName'),
+        headDelegateEmail: formData.get('headDelegateEmail'),
+        headDelegatePhone: formData.get('headDelegatePhone'),
+        sportsTeacherName: formData.get('sportsTeacherName'),
+        sportsTeacherPhone: formData.get('sportsTeacherPhone'),
         password: formData.get('password'),
         confirmPassword: formData.get('confirmPassword')
     };
@@ -184,19 +213,21 @@ function getFormData() {
     const sportsCheckboxes = document.querySelectorAll('input[name="sports"]:checked');
     data.sports = Array.from(sportsCheckboxes).map(cb => cb.value);
 
-    // Get team members
+    // Get team members with enhanced fields
     data.members = [];
-    const memberInputs = document.querySelectorAll('.member-field');
-    memberInputs.forEach(memberInput => {
-        const name = memberInput.querySelector('.member-name').value;
-        const phone = memberInput.querySelector('.member-phone').value;
-        const cnic = memberInput.querySelector('.member-cnic').value;
+    const memberForms = document.querySelectorAll('.member-form');
+    memberForms.forEach((memberForm, index) => {
+        const name = memberForm.querySelector('.member-name').value;
+        const phone = memberForm.querySelector('.member-phone').value;
+        const ageCategory = memberForm.querySelector('.member-age-category').value;
+        const selectedSports = Array.from(memberForm.querySelectorAll('.member-sport-checkbox:checked')).map(cb => cb.value);
         
-        if (name && phone && cnic) {
+        if (name && phone) {
             data.members.push({
                 name: name,
                 phone: phone,
-                cnic: cnic
+                ageCategory: ageCategory,
+                sports: selectedSports
             });
         }
     });
@@ -209,18 +240,24 @@ function validateFormData(data) {
     const errors = [];
 
     // Required fields validation
+    if (!data.delegationType) errors.push('Delegation type is required');
     if (!data.teamName) errors.push('Team name is required');
-    if (!data.institution) errors.push('Institution is required');
     if (!data.city) errors.push('City is required');
-    if (!data.teamCategory) errors.push('Team category is required');
-    if (!data.captainName) errors.push('Captain name is required');
-    if (!data.captainEmail) errors.push('Captain email is required');
-    if (!data.captainPhone) errors.push('Captain phone is required');
-    if (!data.captainCNIC) errors.push('Captain CNIC is required');
+    if (!data.ageCategories || data.ageCategories.length === 0) errors.push('At least one age category is required');
+    if (!data.headDelegateName) errors.push('Head delegate name is required');
+    if (!data.headDelegateEmail) errors.push('Head delegate email is required');
+    if (!data.headDelegatePhone) errors.push('Head delegate phone is required');
     if (!data.password) errors.push('Password is required');
 
+    // Institution-specific validation
+    if (data.delegationType === 'institution') {
+        if (!data.institution) errors.push('Institution is required for institution delegation');
+        if (!data.sportsTeacherName) errors.push('Sports teacher name is required for institution delegation');
+        if (!data.sportsTeacherPhone) errors.push('Sports teacher phone is required for institution delegation');
+    }
+
     // Email validation
-    if (data.captainEmail && !isValidEmail(data.captainEmail)) {
+    if (data.headDelegateEmail && !isValidEmail(data.headDelegateEmail)) {
         errors.push('Please enter a valid email address');
     }
 
@@ -243,14 +280,20 @@ function validateFormData(data) {
     }
 
     // Phone number validation
-    if (data.captainPhone && !isValidPhoneNumber(data.captainPhone)) {
-        errors.push('Please enter a valid phone number');
+    if (data.headDelegatePhone && !isValidPhoneNumber(data.headDelegatePhone)) {
+        errors.push('Please enter a valid phone number for head delegate');
     }
 
-    // CNIC validation
-    if (data.captainCNIC && !isValidCNIC(data.captainCNIC)) {
-        errors.push('Please enter a valid CNIC');
+    if (data.sportsTeacherPhone && !isValidPhoneNumber(data.sportsTeacherPhone)) {
+        errors.push('Please enter a valid phone number for sports teacher');
     }
+
+    // Member validation
+    data.members.forEach((member, index) => {
+        if (member.sports && member.sports.length > 3) {
+            errors.push(`Member ${index + 1} can participate in maximum 3 sports`);
+        }
+    });
 
     return {
         isValid: errors.length === 0,
@@ -258,89 +301,156 @@ function validateFormData(data) {
     };
 }
 
-// Update team members limit based on category
-function updateTeamMembersLimit() {
-    const category = document.getElementById('teamCategory').value;
-    maxMembers = categoryLimits[category] || 9;
-    
-    // Update add member button text
-    const addMemberBtn = document.getElementById('addMemberBtn');
-    if (addMemberBtn) {
-        addMemberBtn.innerHTML = `
-            <i class="fas fa-plus"></i>
-            Add Team Member (${maxMembers - memberCount} remaining)
-        `;
-        
-        // Hide button if limit reached
-        if (memberCount >= maxMembers) {
-            addMemberBtn.style.display = 'none';
-        } else {
-            addMemberBtn.style.display = 'block';
-        }
-    }
-}
 
 // Add member field
 function addMemberField() {
     memberCount++;
     const membersContainer = document.getElementById('membersContainer');
     
-    const memberField = document.createElement('div');
-    memberField.className = 'member-field';
-    memberField.innerHTML = `
-        <div class="member-header">
-            <h4>Team Member ${memberCount}</h4>
+    const memberForm = document.createElement('div');
+    memberForm.className = 'member-form';
+    memberForm.innerHTML = `
+        <div class="member-form-header">
+            <h4 class="member-form-title">Team Member ${memberCount}</h4>
             <button type="button" class="remove-member-btn" onclick="removeMemberField(this)">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="member-form">
+        <div class="member-form-grid">
             <div class="form-group">
-                <label>Member Name</label>
-                <input type="text" class="member-name" placeholder="Enter member's full name">
+                <label>Member Name *</label>
+                <input type="text" class="member-name" placeholder="Enter member's full name" required>
             </div>
             <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" class="member-phone" placeholder="0300-1234567">
+                <label>Phone Number *</label>
+                <input type="tel" class="member-phone" placeholder="0300-1234567" required>
             </div>
             <div class="form-group">
-                <label>CNIC</label>
-                <input type="text" class="member-cnic" placeholder="12345-1234567-1">
+                <label>Age Category *</label>
+                <select class="member-age-category" required>
+                    <option value="">Select Age Category</option>
+                    <option value="under17">Under-17</option>
+                    <option value="under22">Under-22</option>
+                </select>
+            </div>
+        </div>
+        <div class="member-sports-selection">
+            <label>Sports Categories (Maximum 3)</label>
+            <div class="member-sports-grid">
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="futsal">
+                    <span>Futsal</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="cricket">
+                    <span>Cricket</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="basketball">
+                    <span>Basketball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="throwball">
+                    <span>Throwball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="volleyball">
+                    <span>Volleyball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="dodgeball">
+                    <span>Dodgeball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="badminton">
+                    <span>Badminton</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="chess">
+                    <span>Chess</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="ludo">
+                    <span>Ludo</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="carrom">
+                    <span>Carrom</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="scavenger-hunt">
+                    <span>Scavenger Hunt</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="gaming">
+                    <span>Gaming</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="table-tennis">
+                    <span>Table Tennis</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="athletics">
+                    <span>Athletics</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="strongmen">
+                    <span>Strongmen</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="tug-of-war">
+                    <span>Tug of War</span>
+                </label>
             </div>
         </div>
     `;
 
-    membersContainer.appendChild(memberField);
+    membersContainer.appendChild(memberForm);
 
-    // Add phone and CNIC formatting
-    const phoneInput = memberField.querySelector('.member-phone');
-    const cnicInput = memberField.querySelector('.member-cnic');
-    
+    // Add phone formatting
+    const phoneInput = memberForm.querySelector('.member-phone');
     phoneInput.addEventListener('input', function() {
         this.value = formatPhoneNumber(this.value);
     });
-    
-    cnicInput.addEventListener('input', function() {
-        this.value = formatCNIC(this.value);
+
+    // Add sports selection limit
+    const sportCheckboxes = memberForm.querySelectorAll('.member-sport-checkbox');
+    sportCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedBoxes = memberForm.querySelectorAll('.member-sport-checkbox:checked');
+            if (checkedBoxes.length > 3) {
+                this.checked = false;
+                showNotification('Each member can participate in maximum 3 sports', 'warning');
+            }
+        });
     });
 
     // Update add member button
     const addMemberBtn = document.getElementById('addMemberBtn');
     if (memberCount >= maxMembers) {
         addMemberBtn.style.display = 'none';
+    } else {
+        addMemberBtn.innerHTML = `
+            <i class="fas fa-plus"></i>
+            Add Team Member (${maxMembers - memberCount} remaining)
+        `;
     }
 }
 
 // Remove member field
 function removeMemberField(button) {
-    const memberField = button.closest('.member-field');
-    memberField.remove();
+    const memberForm = button.closest('.member-form');
+    memberForm.remove();
     memberCount--;
     
     // Show add member button if under limit
     const addMemberBtn = document.getElementById('addMemberBtn');
     if (memberCount < maxMembers) {
         addMemberBtn.style.display = 'block';
+        addMemberBtn.innerHTML = `
+            <i class="fas fa-plus"></i>
+            Add Team Member (${maxMembers - memberCount} remaining)
+        `;
     }
 }
 

@@ -45,6 +45,28 @@
             </div>
 
             <form class="auth-form" id="registrationForm">
+                <!-- Delegation Type Selection -->
+                <div class="form-section">
+                    <h3><i class="fas fa-building"></i> Delegation Type</h3>
+                    <p class="form-help">Please select your delegation type:</p>
+                    
+                    <div class="delegation-options">
+                        <label class="delegation-option">
+                            <input type="radio" name="delegationType" value="private" required onchange="toggleDelegationFields()">
+                            <span class="delegation-icon"><i class="fas fa-user"></i></span>
+                            <span class="delegation-name">Private</span>
+                            <span class="delegation-desc">Individual or private group registration</span>
+                        </label>
+                        
+                        <label class="delegation-option">
+                            <input type="radio" name="delegationType" value="institution" required onchange="toggleDelegationFields()">
+                            <span class="delegation-icon"><i class="fas fa-university"></i></span>
+                            <span class="delegation-name">Institution</span>
+                            <span class="delegation-desc">School, college, university, or organization</span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Team Information -->
                 <div class="form-section">
                     <h3><i class="fas fa-info-circle"></i> Team Information</h3>
@@ -54,9 +76,9 @@
                         <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="institution">Institution/Organization *</label>
-                        <input type="text" id="institution" name="institution" placeholder="Enter your institution name" required>
+                    <div class="form-group" id="institutionGroup" style="display: none;">
+                        <label for="institution">Team Institution *</label>
+                        <input type="text" id="institution" name="institution" placeholder="Enter your institution name">
                     </div>
 
                     <div class="form-group">
@@ -65,48 +87,56 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="teamCategory">Team Category *</label>
-                        <select id="teamCategory" name="teamCategory" required onchange="updateTeamMembersLimit()">
-                            <option value="">Select Category</option>
-                            <option value="university">University (Max 15 members)</option>
-                            <option value="college">College (Max 12 members)</option>
-                            <option value="school">School (Max 10 members)</option>
-                            <option value="club">Sports Club (Max 20 members)</option>
-                            <option value="corporate">Corporate (Max 15 members)</option>
-                            <option value="community">Community (Max 12 members)</option>
-                        </select>
+                        <label>Age Category *</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="ageCategory" value="under17">
+                                <span class="checkmark"></span>
+                                Under-17
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="ageCategory" value="under22">
+                                <span class="checkmark"></span>
+                                Under-22
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Captain Information -->
+                <!-- Head Delegate Information -->
                 <div class="form-section">
-                    <h3><i class="fas fa-crown"></i> Captain Information</h3>
+                    <h3><i class="fas fa-user-tie"></i> Head Delegate Information</h3>
                     
                     <div class="form-group">
-                        <label for="captainName">Captain Name *</label>
-                        <input type="text" id="captainName" name="captainName" placeholder="Enter captain's full name" required>
+                        <label for="headDelegateName">Head Delegate Name *</label>
+                        <input type="text" id="headDelegateName" name="headDelegateName" placeholder="Enter head delegate's full name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="captainEmail">Captain Email *</label>
-                        <input type="email" id="captainEmail" name="captainEmail" placeholder="captain@example.com" required>
+                        <label for="headDelegateEmail">Head Delegate Email *</label>
+                        <input type="email" id="headDelegateEmail" name="headDelegateEmail" placeholder="delegate@example.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="captainPhone">Captain Phone *</label>
-                        <input type="tel" id="captainPhone" name="captainPhone" placeholder="0300-1234567" required>
+                        <label for="headDelegatePhone">Head Delegate Phone *</label>
+                        <input type="tel" id="headDelegatePhone" name="headDelegatePhone" placeholder="0300-1234567" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="captainCNIC">Captain CNIC *</label>
-                        <input type="text" id="captainCNIC" name="captainCNIC" placeholder="12345-1234567-1" required>
+                    <div class="form-group" id="sportsTeacherGroup" style="display: none;">
+                        <label for="sportsTeacherName">Sports Teacher/Coordinator Name *</label>
+                        <input type="text" id="sportsTeacherName" name="sportsTeacherName" placeholder="Enter sports teacher's full name">
+                    </div>
+
+                    <div class="form-group" id="sportsTeacherPhoneGroup" style="display: none;">
+                        <label for="sportsTeacherPhone">Sports Teacher/Coordinator Phone *</label>
+                        <input type="tel" id="sportsTeacherPhone" name="sportsTeacherPhone" placeholder="0300-1234567">
                     </div>
                 </div>
 
                 <!-- Team Members -->
                 <div class="form-section">
-                    <h3><i class="fas fa-user-friends"></i> Team Members (Optional)</h3>
-                    <p class="form-help">Add up to 9 additional team members. You can add more later.</p>
+                    <h3><i class="fas fa-user-friends"></i> Team Members</h3>
+                    <p class="form-help">Add up to maximum of 500 team members. Each member can participate in maximum of 3 sports categories.</p>
                     
                     <div id="membersContainer">
                         <!-- Members will be added dynamically -->
