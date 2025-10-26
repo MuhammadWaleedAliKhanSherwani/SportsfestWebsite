@@ -1,4 +1,4 @@
-/* Global Text Visibility Fix for Sports Fest Portal */
+/* Targeted Text Visibility Fix for Sports Fest Portal */
 
 /* Color Variables */
 :root {
@@ -7,150 +7,188 @@
     --metallic-bronze: #B08D57;
     --slate-grey: #2E2E3A;
     --pure-white: #FFFFFF;
+    --text-dark: #2c3e50;
+    --text-light: #34495e;
 }
 
-/* Force all text to be visible */
-* {
-    color: var(--slate-grey) !important;
+/* Portal Cards Text Visibility */
+.portal-card h2 {
+    color: var(--text-dark) !important;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
 }
 
-/* Override any inherited white text */
-body,
-html,
-.portal-card,
-.auth-card,
-.dashboard-container,
-.form-section,
-.info-grid,
-.sports-grid,
-.members-list,
-.events-list,
-.results-list {
-    color: var(--slate-grey) !important;
+.portal-card p {
+    color: var(--text-light) !important;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
 }
 
-/* Specific element overrides */
-label,
-span,
-p,
-div,
-h1, h2, h3, h4, h5, h6,
-.form-group label,
-.form-section h3,
-.sport-name,
-.member-name,
-.info-item label,
-.info-item span,
-.portal-card h2,
-.portal-card p,
-.auth-header h1,
-.auth-header p,
-.dashboard-title,
-.dashboard-subtitle {
-    color: var(--slate-grey) !important;
+.portal-features .feature span {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+    font-size: 1rem;
 }
 
-/* Ensure form elements are visible */
+.portal-features .feature i {
+    color: var(--royal-gold) !important;
+    margin-right: 0.5rem;
+}
+
+/* Portal Buttons */
+.portal-btn {
+    color: var(--pure-white) !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.portal-btn i {
+    color: var(--pure-white) !important;
+}
+
+/* Hero Section - Keep original styling */
+.portal-hero-content {
+    color: var(--pure-white) !important;
+}
+
+.portal-hero-title {
+    color: var(--pure-white) !important;
+}
+
+.portal-title-main {
+    color: var(--royal-gold) !important;
+}
+
+.portal-title-sub {
+    color: var(--metallic-bronze) !important;
+}
+
+.portal-hero-description {
+    color: var(--pure-white) !important;
+    opacity: 0.9;
+}
+
+/* Navigation */
+.navbar {
+    background: var(--midnight-navy) !important;
+}
+
+.navbar .nav-logo span {
+    color: var(--pure-white) !important;
+}
+
+.navbar .nav-menu a {
+    color: var(--pure-white) !important;
+}
+
+/* Form Elements */
+.form-group label {
+    color: var(--text-dark) !important;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="tel"],
 select,
 textarea {
-    color: var(--slate-grey) !important;
+    color: var(--text-dark) !important;
     background: var(--pure-white) !important;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
 }
 
-/* Override any white text on white background */
-.portal-card *,
-.auth-card *,
-.dashboard-container *,
-.form-section *,
-.info-grid *,
-.sports-grid *,
-.members-list *,
-.events-list *,
-.results-list * {
-    color: var(--slate-grey) !important;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--royal-gold);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
-/* Force visibility for all text elements */
-.portal-card,
-.auth-card,
-.dashboard-container,
-.form-section,
-.info-grid,
-.sports-grid,
-.members-list,
-.events-list,
-.results-list {
-    color: var(--slate-grey) !important;
+/* Dashboard Elements */
+.dashboard-title {
+    color: var(--text-dark) !important;
+    font-weight: 700;
 }
 
-.portal-card *,
-.auth-card *,
-.dashboard-container *,
-.form-section *,
-.info-grid *,
-.sports-grid *,
-.members-list *,
-.events-list *,
-.results-list * {
-    color: var(--slate-grey) !important;
+.dashboard-subtitle {
+    color: var(--text-light) !important;
 }
 
-/* Specific overrides for common elements */
-.team-name,
-.institution,
-.city,
-.category,
-.captain,
-.status,
-.sport-name,
-.member-name,
-.event-name,
-.result-name {
-    color: var(--slate-grey) !important;
-}
-
-/* Ensure all labels are visible */
-label[for="teamName"],
-label[for="institution"],
-label[for="city"],
-label[for="teamCategory"],
-label[for="captainName"],
-label[for="captainEmail"],
-label[for="captainPhone"],
-label[for="captainCNIC"],
-label[for="password"],
-label[for="confirmPassword"] {
-    color: var(--slate-grey) !important;
+.section-header h2 {
+    color: var(--text-dark) !important;
     font-weight: 600;
 }
 
-/* Override any inherited styles */
-.form-group label,
-.form-section h3,
-.sport-option,
-.member-field,
-.info-item {
-    color: var(--slate-grey) !important;
+/* Sports and Member Elements */
+.sport-name {
+    color: var(--text-dark) !important;
+    font-weight: 500;
 }
 
-/* Force visibility for all text content */
-.portal-card h2,
-.portal-card p,
-.portal-features .feature span,
-.auth-header h1,
-.auth-header p,
-.dashboard-title,
-.dashboard-subtitle,
-.section-header h2,
-.info-item label,
-.info-item span,
-.sport-name,
-.member-name,
-.event-header h4,
-.result-header h4 {
-    color: var(--slate-grey) !important;
+.member-name {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+}
+
+/* Info Items */
+.info-item label {
+    color: var(--text-dark) !important;
+    font-weight: 600;
+}
+
+.info-item span {
+    color: var(--text-light) !important;
+}
+
+/* Auth Cards */
+.auth-header h1 {
+    color: var(--text-dark) !important;
+    font-weight: 700;
+}
+
+.auth-header p {
+    color: var(--text-light) !important;
+}
+
+/* Ensure proper contrast for all text */
+.portal-card,
+.auth-card,
+.dashboard-container,
+.form-section {
+    background: var(--pure-white) !important;
+}
+
+/* Footer */
+.footer {
+    background: var(--midnight-navy) !important;
+    color: var(--pure-white) !important;
+}
+
+.footer-logo span {
+    color: var(--pure-white) !important;
+}
+
+.footer-links a {
+    color: var(--pure-white) !important;
+}
+
+.footer-bottom p {
+    color: var(--pure-white) !important;
 }
