@@ -49,8 +49,6 @@ async function initializeDashboard() {
                 teamId = user.uid;
                 await loadTeamData();
                 await loadDashboardStats();
-                await loadEvents();
-                await loadResults();
             } else {
                 // Redirect to login if not authenticated
                 window.location.href = 'team-login.html';
@@ -215,124 +213,11 @@ async function loadDashboardStats() {
         const totalMembers = 1 + (teamData?.members?.length || 0);
         document.getElementById('totalMembers').textContent = totalMembers;
 
-        // Active events (events where team is participating)
-        const activeEventsSnapshot = await db.collection('events')
-            .where('participatingTeams', 'array-contains', teamId)
-            .where('status', '==', 'active')
-            .get();
-        document.getElementById('activeEvents').textContent = activeEventsSnapshot.size;
-
-        // Completed events
-        const completedEventsSnapshot = await db.collection('events')
-            .where('participatingTeams', 'array-contains', teamId)
-            .where('status', '==', 'completed')
-            .get();
-        document.getElementById('completedEvents').textContent = completedEventsSnapshot.size;
-
     } catch (error) {
         console.error('Error loading dashboard stats:', error);
     }
 }
 
-// Load events
-async function loadEvents() {
-    try {
-        const eventsSnapshot = await db.collection('events')
-            .where('participatingTeams', 'array-contains', teamId)
-            .orderBy('startDate', 'desc')
-            .limit(10)
-            .get();
-
-        const eventsList = document.getElementById('eventsList');
-        eventsList.innerHTML = '';
-
-        if (eventsSnapshot.empty) {
-            eventsList.innerHTML = '<p class="no-data">No events scheduled yet.</p>';
-            return;
-        }
-
-        eventsSnapshot.forEach(doc => {
-            const event = doc.data();
-            const eventCard = document.createElement('div');
-            eventCard.className = 'event-card';
-            eventCard.innerHTML = `
-                <div class="event-header">
-                    <h4>${event.name}</h4>
-                    <span class="event-status ${event.status}">${event.status}</span>
-                </div>
-                <div class="event-details">
-                    <div class="event-info">
-                        <i class="fas fa-trophy"></i>
-                        <span>${event.sport}</span>
-                    </div>
-                    <div class="event-info">
-                        <i class="fas fa-calendar"></i>
-                        <span>${formatDate(event.startDate)}</span>
-                    </div>
-                    <div class="event-info">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${event.venue || 'TBA'}</span>
-                    </div>
-                </div>
-            `;
-            eventsList.appendChild(eventCard);
-        });
-
-    } catch (error) {
-        console.error('Error loading events:', error);
-        document.getElementById('eventsList').innerHTML = '<p class="error">Error loading events.</p>';
-    }
-}
-
-// Load results
-async function loadResults() {
-    try {
-        const resultsSnapshot = await db.collection('results')
-            .where('teamId', '==', teamId)
-            .orderBy('date', 'desc')
-            .limit(10)
-            .get();
-
-        const resultsList = document.getElementById('resultsList');
-        resultsList.innerHTML = '';
-
-        if (resultsSnapshot.empty) {
-            resultsList.innerHTML = '<p class="no-data">No results available yet.</p>';
-            return;
-        }
-
-        resultsSnapshot.forEach(doc => {
-            const result = doc.data();
-            const resultCard = document.createElement('div');
-            resultCard.className = 'result-card';
-            resultCard.innerHTML = `
-                <div class="result-header">
-                    <h4>${result.sport}</h4>
-                    <span class="result-position">${result.position || 'N/A'}</span>
-                </div>
-                <div class="result-details">
-                    <div class="result-info">
-                        <i class="fas fa-medal"></i>
-                        <span>Position: ${result.position || 'N/A'}</span>
-                    </div>
-                    <div class="result-info">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Score: ${result.score || 'N/A'}</span>
-                    </div>
-                    <div class="result-info">
-                        <i class="fas fa-calendar"></i>
-                        <span>${formatDate(result.date)}</span>
-                    </div>
-                </div>
-            `;
-            resultsList.appendChild(resultCard);
-        });
-
-    } catch (error) {
-        console.error('Error loading results:', error);
-        document.getElementById('resultsList').innerHTML = '<p class="error">Error loading results.</p>';
-    }
-}
 
 // Edit team information
 function editTeamInfo() {
@@ -608,6 +493,36 @@ dashboardStyle.textContent = `
         background: #f8f9fa;
         padding: 2rem 0;
         color: #2c3e50;
+    }
+    
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .dashboard-stat {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    
+    .dashboard-stat h3 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #D4AF37;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .dashboard-stat p {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        margin: 0;
+        font-weight: 500;
     }
     
     .dashboard-section {
@@ -981,7 +896,7 @@ dashboardStyle.textContent = `
     
     @media (max-width: 768px) {
         .dashboard-stats {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
         }
         
         .info-grid {
