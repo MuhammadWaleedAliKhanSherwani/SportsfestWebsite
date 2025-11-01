@@ -1822,6 +1822,28 @@ body {
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
     padding-right: 3rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.form-group select option {
+    background: rgba(27, 36, 82, 0.95);
+    color: var(--pure-white);
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.form-group select option:checked,
+.form-group select option:focus {
+    background: var(--royal-gold);
+    color: var(--midnight-navy);
+}
+
+.form-group select option:hover {
+    background: var(--royal-gold);
+    color: var(--midnight-navy);
 }
 
 .submit-btn {

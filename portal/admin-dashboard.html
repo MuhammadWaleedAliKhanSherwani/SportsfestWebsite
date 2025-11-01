@@ -44,7 +44,7 @@
                     <span>Admin Dashboard</span>
                 </div>
                 <div class="dashboard-subtitle">
-                    Manage teams, events, and tournament data
+                    Manage teams and tournament data
                 </div>
                 
                 <!-- Dashboard Stats -->
@@ -56,10 +56,6 @@
                     <div class="dashboard-stat">
                         <h3 id="pendingTeams">0</h3>
                         <p>Pending Teams</p>
-                    </div>
-                    <div class="dashboard-stat">
-                        <h3 id="totalEvents">0</h3>
-                        <p>Total Events</p>
                     </div>
                 </div>
             </div>
@@ -73,9 +69,6 @@
                         <div class="section-actions">
                             <button class="action-btn" onclick="exportTeamData()">
                                 <i class="fas fa-download"></i> Export Teams
-                            </button>
-                            <button class="action-btn" onclick="exportTeamResults()">
-                                <i class="fas fa-trophy"></i> Export Results
                             </button>
                             <button class="action-btn" onclick="refreshTeams()">
                                 <i class="fas fa-sync"></i> Refresh
@@ -139,39 +132,6 @@
                     </div>
                 </div>
 
-                <!-- Events Management -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-calendar-alt"></i> Events Management</h2>
-                        <div class="section-actions">
-                            <button class="action-btn primary" onclick="createEvent()">
-                                <i class="fas fa-plus"></i> Create Event
-                            </button>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div id="eventsList" class="events-grid">
-                            <!-- Events will be loaded dynamically -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Results Management -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-medal"></i> Results Management</h2>
-                        <div class="section-actions">
-                            <button class="action-btn primary" onclick="addResult()">
-                                <i class="fas fa-plus"></i> Add Result
-                            </button>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div id="resultsList" class="results-grid">
-                            <!-- Results will be loaded dynamically -->
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -198,124 +158,6 @@
         </div>
     </div>
 
-    <!-- Create Event Modal -->
-    <div id="createEventModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Create Event</h3>
-                <button class="close-btn" onclick="closeModal('createEventModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="createEventForm">
-                    <div class="form-group">
-                        <label for="eventName">Event Name</label>
-                        <input type="text" id="eventName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventSport">Sport</label>
-                        <select id="eventSport" required>
-                            <option value="">Select Sport</option>
-                            <option value="futsal">Futsal</option>
-                            <option value="cricket">Cricket</option>
-                            <option value="basketball">Basketball</option>
-                            <option value="throwball">Throwball</option>
-                            <option value="volleyball">Volleyball</option>
-                            <option value="dodgeball">Dodgeball</option>
-                            <option value="badminton">Badminton</option>
-                            <option value="chess">Chess</option>
-                            <option value="ludo">Ludo</option>
-                            <option value="carrom">Carrom</option>
-                            <option value="scavenger-hunt">Scavenger Hunt</option>
-                            <option value="gaming">Gaming</option>
-                            <option value="table-tennis">Table Tennis</option>
-                            <option value="athletics">Athletics</option>
-                            <option value="strongmen">Strongmen</option>
-                            <option value="tug-of-war">Tug of War</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventStartDate">Start Date</label>
-                        <input type="datetime-local" id="eventStartDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventEndDate">End Date</label>
-                        <input type="datetime-local" id="eventEndDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventVenue">Venue</label>
-                        <input type="text" id="eventVenue" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventDescription">Description</label>
-                        <textarea id="eventDescription" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn secondary" onclick="closeModal('createEventModal')">Cancel</button>
-                <button class="btn primary" onclick="saveEvent()">Create Event</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Result Modal -->
-    <div id="addResultModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add Result</h3>
-                <button class="close-btn" onclick="closeModal('addResultModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addResultForm">
-                    <div class="form-group">
-                        <label for="resultTeamSelect">Team *</label>
-                        <select id="resultTeamSelect" required>
-                            <option value="">Select Team</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="resultSportSelect">Sport *</label>
-                        <select id="resultSportSelect" required>
-                            <option value="">Select Sport</option>
-                            <option value="Football">Football</option>
-                            <option value="Cricket">Cricket</option>
-                            <option value="Basketball">Basketball</option>
-                            <option value="Volleyball">Volleyball</option>
-                            <option value="Badminton">Badminton</option>
-                            <option value="Table Tennis">Table Tennis</option>
-                            <option value="Tug of War">Tug of War</option>
-                            <option value="Athletics">Athletics</option>
-                            <option value="Swimming">Swimming</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="resultPosition">Position *</label>
-                        <select id="resultPosition" required>
-                            <option value="">Select Position</option>
-                            <option value="1st">1st Place</option>
-                            <option value="2nd">2nd Place</option>
-                            <option value="3rd">3rd Place</option>
-                            <option value="4th">4th Place</option>
-                            <option value="5th">5th Place</option>
-                            <option value="Participated">Participated</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="resultPoints">Points (Optional)</label>
-                        <input type="number" id="resultPoints" placeholder="e.g., 10, 8, 6..." min="0">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn secondary" onclick="closeModal('addResultModal')">Cancel</button>
-                <button class="btn primary" onclick="saveResult()">Add Result</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>
