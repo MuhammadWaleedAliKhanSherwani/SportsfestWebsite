@@ -335,8 +335,9 @@ localStorage.setItem('debug', 'true');
 ## 📞 Support
 
 For technical support or questions:
-- Email: support@pakistanfutsal.com
-- WhatsApp: +92 300 1234567
+- Email: boltsportsf@gmail.com
+- WhatsApp: 0329-4433558 (Fasih Qureshi, Event Head)
+- Phone: 0329-4433558 (Fasih Qureshi) or 0328-4651000 (Hassan Qureshi)
 - Documentation: [Portal Documentation](link-to-docs)
 
 ## 📄 License
