@@ -121,6 +121,36 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
+/* Fix select dropdown option visibility */
+select,
+select.member-age-category,
+.member-age-category {
+    color: var(--text-dark) !important;
+    background: var(--pure-white) !important;
+}
+
+select option,
+select.member-age-category option,
+.member-age-category option {
+    color: var(--text-dark) !important;
+    background: var(--pure-white) !important;
+    padding: 0.75rem;
+}
+
+select option:checked,
+select.member-age-category option:checked,
+.member-age-category option:checked {
+    background: var(--royal-gold) !important;
+    color: var(--midnight-navy) !important;
+}
+
+select option:hover,
+select.member-age-category option:hover,
+.member-age-category option:hover {
+    background: rgba(212, 175, 55, 0.2) !important;
+    color: var(--midnight-navy) !important;
+}
+
 /* Dashboard Elements */
 .dashboard-title {
     color: var(--text-dark) !important;

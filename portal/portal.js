@@ -107,7 +107,7 @@ function updateUIForUser() {
                         </div>
                         <div class="feature">
                             <i class="fas fa-check"></i>
-                            <span>16 Sports Categories</span>
+                            <span>18 Sports Categories</span>
                         </div>
                     </div>
                     <a href="team-dashboard.html" class="portal-btn primary">

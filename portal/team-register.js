@@ -251,7 +251,7 @@ function validateFormData(data) {
 
     // Institution-specific validation
     if (data.delegationType === 'institution') {
-        if (!data.institution) errors.push('Institution is required for institution delegation');
+        if (!data.institution) errors.push('O-levels and A-levels is required for O-levels and A-levels delegation');
         if (!data.sportsTeacherName) errors.push('Sports teacher name is required for institution delegation');
         if (!data.sportsTeacherPhone) errors.push('Sports teacher phone is required for institution delegation');
     }
@@ -330,7 +330,7 @@ function addMemberField() {
                 <select class="member-age-category" required>
                     <option value="">Select Age Category</option>
                     <option value="under17">Under-17</option>
-                    <option value="under22">Under-22</option>
+                    <option value="under21">Under-21</option>
                 </select>
             </div>
         </div>
@@ -400,6 +400,14 @@ function addMemberField() {
                 <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" value="tug-of-war">
                     <span>Tug of War</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="lawn-tennis">
+                    <span>Lawn Tennis</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" value="padel">
+                    <span>Padel</span>
                 </label>
             </div>
         </div>
@@ -822,12 +830,43 @@ registerStyle.textContent = `
         transition: all 0.3s ease;
         background: white;
         cursor: pointer;
+        color: #2c3e50 !important;
     }
     
     select:focus {
         outline: none;
         border-color: #3498db;
         box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    select option {
+        color: #2c3e50 !important;
+        background: white !important;
+        padding: 0.75rem;
+    }
+    
+    select option:checked,
+    select option:focus {
+        background: #3498db !important;
+        color: white !important;
+    }
+    
+    select.member-age-category,
+    .member-age-category {
+        color: #2c3e50 !important;
+        background: white !important;
+    }
+    
+    select.member-age-category option,
+    .member-age-category option {
+        color: #2c3e50 !important;
+        background: white !important;
+    }
+    
+    select.member-age-category option:checked,
+    .member-age-category option:checked {
+        background: #3498db !important;
+        color: white !important;
     }
     
     @media (max-width: 768px) {
