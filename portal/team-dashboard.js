@@ -518,8 +518,8 @@ const dashboardStyle = document.createElement('style');
 dashboardStyle.textContent = `
     .dashboard-container {
         min-height: 100vh;
-        background: #f8f9fa;
-        padding: 2rem 0;
+        background: linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
+        padding: 3rem 0;
         color: #2c3e50;
     }
     
@@ -554,21 +554,23 @@ dashboardStyle.textContent = `
     }
     
     .dashboard-section {
-        background: white;
-        border-radius: 15px;
+        background: #ffffff;
+        border-radius: 16px;
         margin-bottom: 2rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 12px 30px rgba(20, 35, 90, 0.08);
         overflow: hidden;
         color: #2c3e50;
+        border: 1px solid rgba(212, 175, 55, 0.18);
     }
     
     .section-header {
-        background: linear-gradient(135deg, #3498db, #2980b9);
+        background: linear-gradient(135deg, #1f3a8a, #0f2a5a);
         color: white;
-        padding: 1.5rem 2rem;
+        padding: 1.25rem 1.75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-bottom: 2px solid rgba(212, 175, 55, 0.35);
     }
     
     .section-header h2 {
@@ -579,16 +581,17 @@ dashboardStyle.textContent = `
     }
     
     .edit-btn {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: none;
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.25);
         padding: 0.5rem 1rem;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        backdrop-filter: blur(4px);
     }
     
     .edit-btn:hover {
@@ -654,17 +657,18 @@ dashboardStyle.textContent = `
     }
     
     .sport-card {
-        background: #f8f9fa;
-        border: 2px solid #ecf0f1;
-        border-radius: 10px;
-        padding: 1.5rem;
+        background: #ffffff;
+        border: 1px solid #e6ebf1;
+        border-radius: 12px;
+        padding: 1.25rem;
         text-align: center;
-        transition: all 0.3s ease;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
     
     .sport-card:hover {
-        border-color: #3498db;
-        background: #e3f2fd;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(31, 58, 138, 0.12);
+        border-color: rgba(212, 175, 55, 0.35);
     }
     
     .sport-icon {
@@ -699,13 +703,19 @@ dashboardStyle.textContent = `
     }
     
     .member-card {
-        background: #f8f9fa;
-        border: 1px solid #ecf0f1;
-        border-radius: 10px;
-        padding: 1.5rem;
+        background: #ffffff;
+        border: 1px solid #e6ebf1;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .member-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(20, 35, 90, 0.10);
+        border-color: rgba(212, 175, 55, 0.28);
     }
     
     .member-card.captain {
@@ -846,12 +856,14 @@ dashboardStyle.textContent = `
     }
     
     .modal-content {
-        background: white;
-        border-radius: 15px;
-        max-width: 500px;
-        width: 90%;
+        background: #ffffff;
+        border-radius: 16px;
+        max-width: 640px;
+        width: 92%;
         max-height: 80vh;
         overflow-y: auto;
+        box-shadow: 0 24px 60px rgba(15, 42, 90, 0.18);
+        border: 1px solid #e6ebf1;
     }
     
     .modal-header {
@@ -896,17 +908,18 @@ dashboardStyle.textContent = `
     }
     
     .btn {
-        padding: 0.75rem 1.5rem;
+        padding: 0.75rem 1.35rem;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        font-weight: 700;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 14px rgba(31, 58, 138, 0.08);
     }
     
     .btn.primary {
-        background: #3498db;
-        color: white;
+        background: linear-gradient(135deg, #1f3a8a, #0f2a5a);
+        color: #fff;
     }
     
     .btn.primary:hover {
@@ -914,8 +927,8 @@ dashboardStyle.textContent = `
     }
     
     .btn.secondary {
-        background: #95a5a6;
-        color: white;
+        background: #97a6b1;
+        color: #fff;
     }
     
     .btn.secondary:hover {
