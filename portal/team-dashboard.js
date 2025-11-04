@@ -47,8 +47,26 @@ async function initializeDashboard() {
             if (user) {
                 teamUser = user;
                 teamId = user.uid;
+                // Initial load
                 await loadTeamData();
                 await loadDashboardStats();
+
+                // Real-time updates for team document so status reflects immediately after admin actions
+                try {
+                    db.collection('teams').doc(teamId).onSnapshot(function(doc) {
+                        if (doc && doc.exists) {
+                            teamData = doc.data();
+                            // Refresh key sections on any change (status, sports, members, etc.)
+                            displayTeamInfo();
+                            displaySportsParticipation();
+                            displayTeamMembers();
+                        }
+                    }, function(error) {
+                        console.error('Realtime team listener error:', error);
+                    });
+                } catch (listenerError) {
+                    console.error('Failed to attach realtime team listener:', listenerError);
+                }
             } else {
                 // Redirect to login if not authenticated
                 window.location.href = 'team-login.html';
