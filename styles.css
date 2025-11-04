@@ -1696,6 +1696,66 @@ body {
     font-size: 1.2rem;
 }
 
+/* Points System Section */
+.points-system-section {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, var(--midnight-navy) 0%, #1a1f3a 100%);
+}
+
+.points-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.points-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid var(--metallic-bronze);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.points-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+}
+
+.points-icon {
+    background: var(--gold-gradient);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: var(--midnight-navy);
+}
+
+.points-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--royal-gold);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+.points-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--royal-gold);
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 /* Contact Section */
 .contact {
     padding: 6rem 0;

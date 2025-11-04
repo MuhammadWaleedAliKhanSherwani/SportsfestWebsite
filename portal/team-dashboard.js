@@ -188,10 +188,23 @@ function displayTeamMembers() {
                     <div class="member-details">
                         <div class="member-email">${member.email || 'No email'}</div>
                         <div class="member-phone">${member.phone || 'No phone'}</div>
-                        <div class="member-position">${member.position || 'Player'}</div>
+                        <div class="member-age-category">
+                            ${member.ageCategory ? 
+                                (member.ageCategory === 'under17' ? 
+                                    (teamData?.delegationType === 'institution' ? 'O-levels' : 'Under-17') : 
+                                    (member.ageCategory === 'under21' ? 
+                                        (teamData?.delegationType === 'institution' ? 'A-levels' : 'Under-21') : 
+                                        member.ageCategory)) : 
+                                'No age category'}
+                        </div>
+                        <div class="member-sports">
+                            ${member.sports && member.sports.length > 0 ? 
+                                member.sports.map(s => s.charAt(0).toUpperCase() + s.slice(1).replace('-', ' ')).join(', ') : 
+                                'No sports'}
+                        </div>
                     </div>
                 </div>
-                <div class="member-role">${member.position || 'Player'}</div>
+                <div class="member-role">${member.sports && member.sports.length > 0 ? member.sports.length + ' Sport(s)' : 'No Sports'}</div>
             `;
             membersList.appendChild(memberCard);
         });
@@ -234,12 +247,27 @@ function editTeamInfo() {
     const teamNameField = document.getElementById('editTeamName');
     const institutionField = document.getElementById('editInstitution');
     const cityField = document.getElementById('editCity');
-    const categoryField = document.getElementById('editCategory');
+    const editAgeCategories = document.getElementById('editAgeCategories');
 
     if (teamNameField) teamNameField.value = teamData.teamName || '';
     if (institutionField) institutionField.value = teamData.institution || '';
     if (cityField) cityField.value = teamData.city || '';
-    if (categoryField) categoryField.value = teamData.teamCategory || '';
+    
+    // Initialize age category labels based on delegation type
+    const isInstitution = teamData?.delegationType === 'institution';
+    const label17 = document.getElementById('editAgeLabel17');
+    const label21 = document.getElementById('editAgeLabel21');
+    if (label17 && label21) {
+        label17.textContent = isInstitution ? 'O-levels' : 'Under-17';
+        label21.textContent = isInstitution ? 'A-levels' : 'Under-21';
+    }
+    // Set age categories checked
+    if (editAgeCategories) {
+        const selected = (teamData.ageCategories && Array.isArray(teamData.ageCategories)) ? teamData.ageCategories : [];
+        Array.from(editAgeCategories.querySelectorAll('input[name="editAgeCategory"]')).forEach(cb => {
+            cb.checked = selected.includes(cb.value);
+        });
+    }
 
     // Show modal
     const modal = document.getElementById('editTeamModal');
@@ -263,13 +291,13 @@ function editTeamInfo() {
 // Save team information
 async function saveTeamInfo() {
     try {
-        const updatedData = {
-            teamName: document.getElementById('editTeamName').value,
-            institution: document.getElementById('editInstitution').value,
-            city: document.getElementById('editCity').value,
-            teamCategory: document.getElementById('editCategory').value,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
+    const updatedData = {
+        teamName: document.getElementById('editTeamName').value,
+        institution: document.getElementById('editInstitution').value,
+        city: document.getElementById('editCity').value,
+        ageCategories: Array.from(document.querySelectorAll('#editAgeCategories input[name="editAgeCategory"]:checked')).map(cb => cb.value),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
         await db.collection('teams').doc(teamId).update(updatedData);
         
@@ -1372,17 +1400,106 @@ function addMemberEditField(member = {}, index = 0) {
                 <input type="tel" name="memberPhone" value="${member.phone || ''}" placeholder="0300-1234567">
             </div>
             <div class="form-group">
-                <label>Position</label>
-                <select name="memberPosition">
-                    <option value="player" ${member.position === 'player' ? 'selected' : ''}>Player</option>
-                    <option value="substitute" ${member.position === 'substitute' ? 'selected' : ''}>Substitute</option>
-                    <option value="reserve" ${member.position === 'reserve' ? 'selected' : ''}>Reserve</option>
+                <label>Age Category *</label>
+                <select name="memberAgeCategory" required>
+                    <option value="">Select Age Category</option>
+                    <option value="under17" ${member.ageCategory === 'under17' ? 'selected' : ''}>${teamData?.delegationType === 'institution' ? 'O-levels' : 'Under-17'}</option>
+                    <option value="under21" ${member.ageCategory === 'under21' ? 'selected' : ''}>${teamData?.delegationType === 'institution' ? 'A-levels' : 'Under-21'}</option>
                 </select>
+            </div>
+        </div>
+        <div class="member-sports-selection">
+            <label>Sports Categories (Maximum 3) *</label>
+            <div class="member-sports-grid">
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="futsal" ${member.sports && member.sports.includes('futsal') ? 'checked' : ''}>
+                    <span>Futsal</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="cricket" ${member.sports && member.sports.includes('cricket') ? 'checked' : ''}>
+                    <span>Cricket</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="basketball" ${member.sports && member.sports.includes('basketball') ? 'checked' : ''}>
+                    <span>Basketball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="throwball" ${member.sports && member.sports.includes('throwball') ? 'checked' : ''}>
+                    <span>Throwball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="volleyball" ${member.sports && member.sports.includes('volleyball') ? 'checked' : ''}>
+                    <span>Volleyball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="dodgeball" ${member.sports && member.sports.includes('dodgeball') ? 'checked' : ''}>
+                    <span>Dodgeball</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="badminton" ${member.sports && member.sports.includes('badminton') ? 'checked' : ''}>
+                    <span>Badminton</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="chess" ${member.sports && member.sports.includes('chess') ? 'checked' : ''}>
+                    <span>Chess</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="ludo" ${member.sports && member.sports.includes('ludo') ? 'checked' : ''}>
+                    <span>Ludo</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="carrom" ${member.sports && member.sports.includes('carrom') ? 'checked' : ''}>
+                    <span>Carrom</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="scavenger-hunt" ${member.sports && member.sports.includes('scavenger-hunt') ? 'checked' : ''}>
+                    <span>Scavenger Hunt</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="gaming" ${member.sports && member.sports.includes('gaming') ? 'checked' : ''}>
+                    <span>Gaming</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="table-tennis" ${member.sports && member.sports.includes('table-tennis') ? 'checked' : ''}>
+                    <span>Table Tennis</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="athletics" ${member.sports && member.sports.includes('athletics') ? 'checked' : ''}>
+                    <span>Athletics</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="strongmen" ${member.sports && member.sports.includes('strongmen') ? 'checked' : ''}>
+                    <span>Strongmen</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="tug-of-war" ${member.sports && member.sports.includes('tug-of-war') ? 'checked' : ''}>
+                    <span>Tug of War</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="lawn-tennis" ${member.sports && member.sports.includes('lawn-tennis') ? 'checked' : ''}>
+                    <span>Lawn Tennis</span>
+                </label>
+                <label class="member-sport-option">
+                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="padel" ${member.sports && member.sports.includes('padel') ? 'checked' : ''}>
+                    <span>Padel</span>
+                </label>
             </div>
         </div>
     `;
     
     membersList.appendChild(memberField);
+    
+    // Add sports selection limit validation
+    const sportCheckboxes = memberField.querySelectorAll('.member-sport-checkbox');
+    sportCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedBoxes = memberField.querySelectorAll('.member-sport-checkbox:checked');
+            if (checkedBoxes.length > 3) {
+                this.checked = false;
+                showNotification('Each member can participate in maximum 3 sports', 'warning');
+            }
+        });
+    });
 }
 
 // Remove member field
@@ -1433,23 +1550,46 @@ async function saveTeamMembers() {
         
         const memberFields = membersList.querySelectorAll('.member-edit-field');
         const members = [];
+        let hasErrors = false;
         
         memberFields.forEach((field, index) => {
             const name = field.querySelector('input[name="memberName"]').value.trim();
             const email = field.querySelector('input[name="memberEmail"]').value.trim();
             const phone = field.querySelector('input[name="memberPhone"]').value.trim();
-            const position = field.querySelector('select[name="memberPosition"]').value;
+            const ageCategory = field.querySelector('select[name="memberAgeCategory"]').value;
+            const selectedSports = Array.from(field.querySelectorAll('.member-sport-checkbox:checked')).map(cb => cb.value);
             
             if (name) {
+                if (!ageCategory) {
+                    showNotification(`Member ${index + 1}: Age category is required`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                if (selectedSports.length === 0) {
+                    showNotification(`Member ${index + 1}: At least one sport is required`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                if (selectedSports.length > 3) {
+                    showNotification(`Member ${index + 1}: Maximum 3 sports allowed`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                
                 members.push({
                     name: name,
                     email: email || '',
                     phone: phone || '',
-                    position: position,
+                    ageCategory: ageCategory,
+                    sports: selectedSports,
                     id: `member_${Date.now()}_${index}`
                 });
             }
         });
+        
+        if (hasErrors) {
+            return;
+        }
         
         // Update team document
         await db.collection('teams').doc(teamId).update({

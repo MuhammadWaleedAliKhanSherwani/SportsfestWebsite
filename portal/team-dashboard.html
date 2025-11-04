@@ -78,7 +78,7 @@
                                 <span id="teamNameInfo">-</span>
                             </div>
                             <div class="info-item">
-                                <label>O-levels and A-levels:</label>
+                                <label>Institution:</label>
                                 <span id="institutionInfo">-</span>
                             </div>
                             <div class="info-item">
@@ -150,7 +150,7 @@
                         <input type="text" id="editTeamName" required>
                     </div>
                     <div class="form-group">
-                        <label for="editInstitution">O-levels and A-levels</label>
+                        <label for="editInstitution">Institution</label>
                         <input type="text" id="editInstitution" required>
                     </div>
                     <div class="form-group">
@@ -158,15 +158,19 @@
                         <input type="text" id="editCity" required>
                     </div>
                     <div class="form-group">
-                        <label for="editCategory">Category</label>
-                        <select id="editCategory" required>
-                            <option value="university">University</option>
-                            <option value="college">College</option>
-                            <option value="school">School</option>
-                            <option value="club">Sports Club</option>
-                            <option value="corporate">Corporate</option>
-                            <option value="community">Community</option>
-                        </select>
+                        <label>Age Category</label>
+                        <div class="checkbox-group" id="editAgeCategories">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="editAgeCategory" value="under17">
+                                <span class="checkmark"></span>
+                                <span class="edit-age-label" id="editAgeLabel17">Under-17</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="editAgeCategory" value="under21">
+                                <span class="checkmark"></span>
+                                <span class="edit-age-label" id="editAgeLabel21">Under-21</span>
+                            </label>
+                        </div>
                     </div>
                 </form>
             </div>

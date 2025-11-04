@@ -62,6 +62,12 @@ function toggleDelegationFields() {
         document.getElementById('institution').required = true;
         document.getElementById('sportsTeacherName').required = true;
         document.getElementById('sportsTeacherPhone').required = true;
+        
+        // Update age category labels to "O-levels" and "A-levels"
+        updateAgeCategoryLabels('O-levels', 'A-levels');
+        
+        // Update existing member age category options
+        updateMemberAgeCategoryOptions('O-levels', 'A-levels');
     } else {
         // Hide institution field and sports teacher fields
         institutionGroup.style.display = 'none';
@@ -72,7 +78,47 @@ function toggleDelegationFields() {
         document.getElementById('institution').required = false;
         document.getElementById('sportsTeacherName').required = false;
         document.getElementById('sportsTeacherPhone').required = false;
+        
+        // Update age category labels back to "Under-17" and "Under-21"
+        updateAgeCategoryLabels('Under-17', 'Under-21');
+        
+        // Update existing member age category options
+        updateMemberAgeCategoryOptions('Under-17', 'Under-21');
     }
+}
+
+// Update age category labels in the main form
+function updateAgeCategoryLabels(label1, label2) {
+    const ageCategoryLabels = document.querySelectorAll('.age-category-label');
+    if (ageCategoryLabels.length >= 2) {
+        if (selectedDelegationType === 'institution') {
+            // First option shows "O-levels", second shows "A-levels"
+            ageCategoryLabels[0].textContent = 'O-levels';
+            ageCategoryLabels[1].textContent = 'A-levels';
+        } else {
+            // Restore original labels
+            ageCategoryLabels[0].textContent = label1 || 'Under-17';
+            ageCategoryLabels[1].textContent = label2 || 'Under-21';
+        }
+    }
+}
+
+// Update age category options in member forms
+function updateMemberAgeCategoryOptions(label1, label2) {
+    const memberAgeCategorySelects = document.querySelectorAll('.member-age-category');
+    memberAgeCategorySelects.forEach(select => {
+        const options = select.querySelectorAll('option');
+        if (options.length >= 3) {
+            if (selectedDelegationType === 'institution') {
+                // First option shows "O-levels", second shows "A-levels"
+                options[1].textContent = 'O-levels';
+                options[2].textContent = 'A-levels';
+            } else {
+                options[1].textContent = label1 || 'Under-17';
+                options[2].textContent = label2 || 'Under-21';
+            }
+        }
+    });
 }
 
 // Initialize registration form functionality
@@ -251,7 +297,7 @@ function validateFormData(data) {
 
     // Institution-specific validation
     if (data.delegationType === 'institution') {
-        if (!data.institution) errors.push('O-levels and A-levels is required for O-levels and A-levels delegation');
+        if (!data.institution) errors.push('Institution is required for institution delegation');
         if (!data.sportsTeacherName) errors.push('Sports teacher name is required for institution delegation');
         if (!data.sportsTeacherPhone) errors.push('Sports teacher phone is required for institution delegation');
     }
@@ -329,8 +375,8 @@ function addMemberField() {
                 <label>Age Category *</label>
                 <select class="member-age-category" required>
                     <option value="">Select Age Category</option>
-                    <option value="under17">Under-17</option>
-                    <option value="under21">Under-21</option>
+                    <option value="under17">${selectedDelegationType === 'institution' ? 'O-levels' : 'Under-17'}</option>
+                    <option value="under21">${selectedDelegationType === 'institution' ? 'A-levels' : 'Under-21'}</option>
                 </select>
             </div>
         </div>

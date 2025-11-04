@@ -62,7 +62,7 @@
                         <label class="delegation-option">
                             <input type="radio" name="delegationType" value="institution" required onchange="toggleDelegationFields()">
                             <span class="delegation-icon"><i class="fas fa-university"></i></span>
-                            <span class="delegation-name">O-levels and A-levels</span>
+                            <span class="delegation-name">Institution</span>
                             <span class="delegation-desc">School, college, university, or organization</span>
                         </label>
                     </div>
@@ -78,8 +78,8 @@
                     </div>
 
                     <div class="form-group" id="institutionGroup" style="display: none;">
-                        <label for="institution">Team O-levels and A-levels *</label>
-                        <input type="text" id="institution" name="institution" placeholder="Enter your O-levels and A-levels name">
+                        <label for="institution">Team Institution *</label>
+                        <input type="text" id="institution" name="institution" placeholder="Enter your institution name">
                     </div>
 
                     <div class="form-group">
@@ -89,16 +89,16 @@
 
                     <div class="form-group">
                         <label>Age Category *</label>
-                        <div class="checkbox-group">
+                        <div class="checkbox-group" id="ageCategoryGroup">
                             <label class="checkbox-label">
                                 <input type="checkbox" name="ageCategory" value="under17">
                                 <span class="checkmark"></span>
-                                Under-17
+                                <span class="age-category-label">Under-17</span>
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" name="ageCategory" value="under21">
                                 <span class="checkmark"></span>
-                                Under-21
+                                <span class="age-category-label">Under-21</span>
                             </label>
                         </div>
                     </div>
