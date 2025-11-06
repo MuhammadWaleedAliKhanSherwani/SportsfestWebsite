@@ -40,7 +40,39 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeRegistrationForm();
     setupPasswordStrength();
     setupFormValidation();
+    
+    // Check if user is already authenticated (e.g., from Google sign-in)
+    checkExistingAuth();
 });
+
+// Check if user is already authenticated and adjust form accordingly
+function checkExistingAuth() {
+    auth.onAuthStateChanged(function(user) {
+        if (user) {
+            console.log('User already authenticated:', user.email);
+            // Pre-fill email if it matches
+            const emailField = document.getElementById('headDelegateEmail');
+            if (emailField && !emailField.value) {
+                emailField.value = user.email;
+                emailField.readOnly = true;
+            }
+            
+            // Make password fields optional for authenticated users
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            if (passwordField) {
+                passwordField.required = false;
+                passwordField.placeholder = 'Leave blank if using Google account';
+                passwordField.parentElement.querySelector('label').innerHTML = 'Password <span style="color: #999; font-weight: normal;">(optional if using Google account)</span>';
+            }
+            if (confirmPasswordField) {
+                confirmPasswordField.required = false;
+                confirmPasswordField.placeholder = 'Leave blank if using Google account';
+                confirmPasswordField.parentElement.querySelector('label').innerHTML = 'Confirm Password <span style="color: #999; font-weight: normal;">(optional if using Google account)</span>';
+            }
+        }
+    });
+}
 
 // Toggle delegation fields based on selection
 function toggleDelegationFields() {
@@ -166,18 +198,51 @@ async function handleRegistration() {
             return;
         }
 
-        // Create user account
-        const userCredential = await auth.createUserWithEmailAndPassword(
-            formData.headDelegateEmail, 
-            formData.password
-        );
-        const user = userCredential.user;
+        let user;
+        
+        // Check if user is already authenticated (e.g., from Google sign-in)
+        const currentUser = auth.currentUser;
+        if (currentUser && currentUser.email === formData.headDelegateEmail) {
+            // User is already authenticated, use existing account
+            user = currentUser;
+            console.log('Using existing authenticated user:', user.uid);
+            
+            // Update user document if it doesn't exist or update it
+            const userDocRef = db.collection('users').doc(user.uid);
+            const userDoc = await userDocRef.get();
+            
+            if (!userDoc.exists) {
+                // Create user document if it doesn't exist
+                await createUserDocument(user, 'team', {
+                    teamName: formData.teamName,
+                    teamId: user.uid
+                });
+            } else {
+                // Update existing user document
+                await userDocRef.update({
+                    role: 'team',
+                    teamName: formData.teamName,
+                    teamId: user.uid,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        } else {
+            // Create new user account with email/password
+            if (!formData.password) {
+                throw new Error('Password is required for new account registration');
+            }
+            const userCredential = await auth.createUserWithEmailAndPassword(
+                formData.headDelegateEmail, 
+                formData.password
+            );
+            user = userCredential.user;
 
-        // Create user document FIRST (this is required for Firestore rules)
-        await createUserDocument(user, 'team', {
-            teamName: formData.teamName,
-            teamId: user.uid
-        });
+            // Create user document FIRST (this is required for Firestore rules)
+            await createUserDocument(user, 'team', {
+                teamName: formData.teamName,
+                teamId: user.uid
+            });
+        }
 
         // Create team document
         const teamData = {
@@ -307,17 +372,20 @@ function validateFormData(data) {
         errors.push('Please enter a valid email address');
     }
 
-    // Password validation
-    if (data.password) {
+    // Password validation (only if user is not already authenticated)
+    const currentUser = auth.currentUser;
+    if (!currentUser && data.password) {
         const passwordValidation = validatePassword(data.password);
         if (!passwordValidation.isValid) {
             errors.push(...passwordValidation.errors);
         }
-    }
-
-    // Password confirmation
-    if (data.password !== data.confirmPassword) {
-        errors.push('Passwords do not match');
+        
+        // Password confirmation
+        if (data.password !== data.confirmPassword) {
+            errors.push('Passwords do not match');
+        }
+    } else if (!currentUser && !data.password) {
+        errors.push('Password is required');
     }
 
     // Sports selection validation
