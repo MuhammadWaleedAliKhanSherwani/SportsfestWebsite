@@ -47,26 +47,14 @@ async function initializeDashboard() {
             if (user) {
                 teamUser = user;
                 teamId = user.uid;
+                console.log('Dashboard initialized for user:', user.email, 'UID:', user.uid);
+                
                 // Initial load
                 await loadTeamData();
                 await loadDashboardStats();
 
-                // Real-time updates for team document so status reflects immediately after admin actions
-                try {
-                    db.collection('teams').doc(teamId).onSnapshot(function(doc) {
-                        if (doc && doc.exists) {
-                            teamData = doc.data();
-                            // Refresh key sections on any change (status, sports, members, etc.)
-                            displayTeamInfo();
-                            displaySportsParticipation();
-                            displayTeamMembers();
-                        }
-                    }, function(error) {
-                        console.error('Realtime team listener error:', error);
-                    });
-                } catch (listenerError) {
-                    console.error('Failed to attach realtime team listener:', listenerError);
-                }
+                // Real-time updates will be set up in loadTeamData if team is found
+                // This is handled by setupRealtimeListener() function
             } else {
                 // Redirect to login if not authenticated
                 window.location.href = 'team-login.html';
@@ -82,23 +70,142 @@ async function initializeDashboard() {
 async function loadTeamData() {
     try {
         console.log('Loading team data for teamId:', teamId);
-        const teamDoc = await db.collection('teams').doc(teamId).get();
-        console.log('Team document exists:', teamDoc.exists);
+        let teamDoc = await db.collection('teams').doc(teamId).get();
+        console.log('Team document exists (by UID):', teamDoc.exists);
+        
+        // If not found by UID, try to find by email
+        if (!teamDoc.exists && teamUser && teamUser.email) {
+            console.log('Team not found by UID, searching by email:', teamUser.email);
+            
+            // Try to find team by headDelegate email
+            const teamsByEmail = await db.collection('teams')
+                .where('headDelegate.email', '==', teamUser.email)
+                .limit(1)
+                .get();
+            
+            if (!teamsByEmail.empty) {
+                teamDoc = teamsByEmail.docs[0];
+                teamId = teamDoc.id; // Update teamId to the found document ID
+                console.log('Found team by email, document ID:', teamId);
+            } else {
+                // Try to find by captain email (legacy field)
+                const teamsByCaptainEmail = await db.collection('teams')
+                    .where('captain.email', '==', teamUser.email)
+                    .limit(1)
+                    .get();
+                
+                if (!teamsByCaptainEmail.empty) {
+                    teamDoc = teamsByCaptainEmail.docs[0];
+                    teamId = teamDoc.id;
+                    console.log('Found team by captain email, document ID:', teamId);
+                }
+            }
+        }
+        
+        // Also check user document for teamId reference
+        if (!teamDoc.exists) {
+            console.log('Checking user document for teamId reference');
+            const userDoc = await db.collection('users').doc(teamId).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                console.log('User document data:', userData);
+                if (userData.teamId && userData.teamId !== teamId) {
+                    console.log('Found teamId in user document:', userData.teamId);
+                    teamDoc = await db.collection('teams').doc(userData.teamId).get();
+                    if (teamDoc.exists) {
+                        teamId = userData.teamId;
+                        console.log('Found team using teamId from user document');
+                    }
+                }
+            }
+        }
+        
+        // Last resort: Search all teams by email (broader search)
+        if (!teamDoc.exists && teamUser && teamUser.email) {
+            console.log('Performing broader search for teams with email:', teamUser.email);
+            try {
+                // Get all teams and filter client-side (if Firestore queries fail)
+                const allTeamsSnapshot = await db.collection('teams').limit(100).get();
+                let foundTeam = null;
+                
+                allTeamsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Check headDelegate email
+                    if (data.headDelegate && data.headDelegate.email === teamUser.email) {
+                        foundTeam = doc;
+                        return;
+                    }
+                    // Check captain email (legacy)
+                    if (data.captain && data.captain.email === teamUser.email) {
+                        foundTeam = doc;
+                        return;
+                    }
+                });
+                
+                if (foundTeam) {
+                    teamDoc = foundTeam;
+                    teamId = foundTeam.id;
+                    console.log('Found team using broader search, document ID:', teamId);
+                }
+            } catch (searchError) {
+                console.warn('Error in broader team search:', searchError);
+            }
+        }
         
         if (teamDoc.exists) {
             teamData = teamDoc.data();
             console.log('Team data loaded:', teamData);
+            
+            // Update user document with correct teamId if it was different
+            if (teamDoc.id !== teamUser.uid) {
+                try {
+                    await db.collection('users').doc(teamUser.uid).update({
+                        teamId: teamDoc.id,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('Updated user document with correct teamId');
+                } catch (updateError) {
+                    console.warn('Could not update user document:', updateError);
+                }
+            }
+            
             displayTeamInfo();
             displaySportsParticipation();
             displayTeamMembers();
+            
+            // Set up real-time listener with the correct teamId
+            setupRealtimeListener();
         } else {
-            console.log('Team document not found');
+            console.log('Team document not found after all attempts');
             showNotification('Team data not found. You can create it now or contact support.', 'error');
             showCreateTeamDataOption();
         }
     } catch (error) {
         console.error('Error loading team data:', error);
-        showNotification('Error loading team data.', 'error');
+        showNotification('Error loading team data: ' + error.message, 'error');
+    }
+}
+
+// Set up real-time listener for team document
+function setupRealtimeListener() {
+    if (!teamId) return;
+    
+    try {
+        console.log('Setting up real-time listener for teamId:', teamId);
+        db.collection('teams').doc(teamId).onSnapshot(function(doc) {
+            if (doc && doc.exists) {
+                teamData = doc.data();
+                console.log('Team data updated via real-time listener');
+                // Refresh key sections on any change (status, sports, members, etc.)
+                displayTeamInfo();
+                displaySportsParticipation();
+                displayTeamMembers();
+            }
+        }, function(error) {
+            console.error('Realtime team listener error:', error);
+        });
+    } catch (listenerError) {
+        console.error('Failed to attach realtime team listener:', listenerError);
     }
 }
 

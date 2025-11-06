@@ -268,18 +268,40 @@ async function handleRegistration() {
         };
 
         // Save team data to Firestore using user's UID as document ID
-        await db.collection('teams').doc(user.uid).set(teamData);
+        console.log('Creating team document with UID:', user.uid);
+        console.log('Team data to save:', teamData);
+        
+        try {
+            await db.collection('teams').doc(user.uid).set(teamData);
+            console.log('Team document created successfully');
+        } catch (teamError) {
+            console.error('Error creating team document:', teamError);
+            throw new Error('Failed to create team document: ' + teamError.message);
+        }
 
         // Create sports participation records
-        for (const sport of formData.sports) {
-            await db.collection('sports_participation').add({
-                teamId: user.uid,
-                teamName: formData.teamName,
-                sport: sport,
-                status: 'registered',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+        try {
+            for (const sport of formData.sports) {
+                await db.collection('sports_participation').add({
+                    teamId: user.uid,
+                    teamName: formData.teamName,
+                    sport: sport,
+                    status: 'registered',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            console.log('Sports participation records created successfully');
+        } catch (sportError) {
+            console.warn('Error creating sports participation records:', sportError);
+            // Don't fail registration if sports participation fails
         }
+
+        // Verify team document was created
+        const verifyDoc = await db.collection('teams').doc(user.uid).get();
+        if (!verifyDoc.exists) {
+            throw new Error('Team document was not created. Please try again.');
+        }
+        console.log('Team document verified successfully');
 
         showNotification('Team registered successfully! Redirecting to dashboard...', 'success');
         
