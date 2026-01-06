@@ -5,10 +5,12 @@
   "main": "setup-admin.js",
   "scripts": {
     "setup": "node setup-admin.js",
+    "build-analytics": "node build-analytics.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@dataconnect/generated": "file:dataconnect-generated/js/example-connector",
+    "@vercel/analytics": "^1.6.1",
     "firebase": "^9.0.0"
   },
   "keywords": [
