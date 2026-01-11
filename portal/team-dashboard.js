@@ -462,7 +462,7 @@ function editSportsParticipation() {
     const sports = [
         'futsal', 'cricket', 'basketball', 'throwball', 'volleyball',
         'dodgeball', 'badminton', 'chess', 'ludo', 'carrom',
-        'scavenger-hunt', 'gaming', 'table-tennis', 'athletics',
+        'scavenger-hunt', 'gaming', 'athletics',
         'strongmen', 'tug-of-war'
     ];
 
@@ -618,7 +618,6 @@ function getSportIcon(sport) {
         'carrom': 'circle',
         'scavenger-hunt': 'search',
         'gaming': 'gamepad',
-        'table-tennis': 'table-tennis',
         'athletics': 'running',
         'strongmen': 'dumbbell',
         'tug-of-war': 'hand-rock'
@@ -1598,10 +1597,6 @@ function addMemberEditField(member = {}, index = 0) {
                     <span>Gaming</span>
                 </label>
                 <label class="member-sport-option">
-                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="table-tennis" ${member.sports && member.sports.includes('table-tennis') ? 'checked' : ''}>
-                    <span>Table Tennis</span>
-                </label>
-                <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="athletics" ${member.sports && member.sports.includes('athletics') ? 'checked' : ''}>
                     <span>Athletics</span>
                 </label>
@@ -1612,10 +1607,6 @@ function addMemberEditField(member = {}, index = 0) {
                 <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="tug-of-war" ${member.sports && member.sports.includes('tug-of-war') ? 'checked' : ''}>
                     <span>Tug of War</span>
-                </label>
-                <label class="member-sport-option">
-                    <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="lawn-tennis" ${member.sports && member.sports.includes('lawn-tennis') ? 'checked' : ''}>
-                    <span>Lawn Tennis</span>
                 </label>
                 <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" name="memberSports" value="padel" ${member.sports && member.sports.includes('padel') ? 'checked' : ''}>

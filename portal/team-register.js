@@ -522,10 +522,6 @@ function addMemberField() {
                     <span>Gaming</span>
                 </label>
                 <label class="member-sport-option">
-                    <input type="checkbox" class="member-sport-checkbox" value="table-tennis">
-                    <span>Table Tennis</span>
-                </label>
-                <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" value="athletics">
                     <span>Athletics</span>
                 </label>
@@ -536,10 +532,6 @@ function addMemberField() {
                 <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" value="tug-of-war">
                     <span>Tug of War</span>
-                </label>
-                <label class="member-sport-option">
-                    <input type="checkbox" class="member-sport-checkbox" value="lawn-tennis">
-                    <span>Lawn Tennis</span>
                 </label>
                 <label class="member-sport-option">
                     <input type="checkbox" class="member-sport-checkbox" value="padel">
